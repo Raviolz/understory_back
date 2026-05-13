@@ -1,0 +1,116 @@
+package raviolz.understory_back.entities;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import raviolz.understory_back.exceptions.ValidationException;
+
+import java.util.UUID;
+
+@NoArgsConstructor
+@Getter
+@Entity
+@Table(name = "users")
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @Column(nullable = false, unique = true)
+    private String username;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private String surname;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(name = "avatar_url", nullable = false)
+    private String avatarUrl;
+
+    @Column(nullable = false)
+    private int xp;
+
+    @Column(nullable = false)
+    private int level;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
+
+    public User(String username, String name, String surname, String email, String password, Role role) {
+        setUsername(username);
+        setName(name);
+        setSurname(surname);
+        setEmail(email);
+        if (password == null || password.isBlank()) {
+            throw new ValidationException("Password is required");
+        }
+        this.password = password;
+        this.avatarUrl = "https://ui-avatars.com/api/?name=" + name + "+" + surname; // momentaneo in attesa di avatar base a tema
+        this.xp = 0;
+        this.level = 1;
+        if (role == null) {
+            throw new ValidationException("Role is required");
+        }
+        this.role = role;
+    }
+
+    public void setUsername(String username) {
+        if (username == null || username.isBlank()) {
+            throw new ValidationException("Username is required");
+        }
+        if (username.length() < 3) {
+            throw new ValidationException("Username must contain at least 3 characters");
+        }
+        this.username = username.trim();
+    }
+
+    public void setName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new ValidationException("Name is required");
+        }
+        this.name = name.trim();
+
+    }
+
+    public void setSurname(String surname) {
+        if (surname == null || surname.isBlank()) {
+            throw new ValidationException("Surname is required");
+        }
+        this.surname = surname.trim();
+
+    }
+
+    public void setEmail(String email) {
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("Email is required");
+        }
+        if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+            throw new ValidationException("Invalid email format");
+        }
+        this.email = email.trim();
+    }
+
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", email='" + email + '\'' +
+                ", xp=" + xp +
+                ", level=" + level +
+                ", roleCode='" + (role != null ? role.getCode() : "N/A") + '\'' +
+                '}';
+    }
+}
