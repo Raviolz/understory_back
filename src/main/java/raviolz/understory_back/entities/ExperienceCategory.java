@@ -22,9 +22,9 @@ public class ExperienceCategory {
     private String code;
     @Column(nullable = false)
     private String description;
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(nullable = false, length = 50)
     private String icon;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String color;
 
 

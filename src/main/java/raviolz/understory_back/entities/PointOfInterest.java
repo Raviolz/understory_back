@@ -46,7 +46,7 @@ public class PointOfInterest {
         setCity(city);
         setName(name);
         setShortDescription(shortDescription);
-        this.imageUrl = imageUrl.trim();
+        setImageUrl(imageUrl);
         setLongitude(longitude);
         setLatitude(latitude);
         this.active = false;
@@ -88,11 +88,10 @@ public class PointOfInterest {
         this.shortDescription = shortDescription;
     }
 
-    public void updateImageUrl(String imageUrl) {
-        if (imageUrl == null || imageUrl.isBlank()) {
-            throw new ValidationException("Cover image url is required");
-        }
-        this.imageUrl = imageUrl.trim();
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl != null && !imageUrl.isBlank()
+                ? imageUrl.trim()
+                : null;
     }
 
 

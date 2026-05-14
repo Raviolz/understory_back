@@ -57,49 +57,49 @@ public class QuizGame {
         setExplanationText(explanationText);
     }
 
-    private void setExperience(Experience experience) {
+    public void setExperience(Experience experience) {
         if (experience == null) {
             throw new ValidationException("Experience is required");
         }
         this.experience = experience;
     }
 
-    private void setQuestionText(String questionText) {
+    public void setQuestionText(String questionText) {
         if (questionText == null || questionText.isBlank()) {
             throw new ValidationException("Question text is required");
         }
         this.questionText = questionText;
     }
 
-    private void setAnswerA(String answerA) {
+    public void setAnswerA(String answerA) {
         if (answerA == null || answerA.isBlank()) {
             throw new ValidationException("Answer A is required");
         }
         this.answerA = answerA;
     }
 
-    private void setAnswerB(String answerB) {
+    public void setAnswerB(String answerB) {
         if (answerB == null || answerB.isBlank()) {
             throw new ValidationException("Answer B is required");
         }
         this.answerB = answerB;
     }
 
-    private void setAnswerC(String answerC) {
+    public void setAnswerC(String answerC) {
         if (answerC == null || answerC.isBlank()) {
             throw new ValidationException("Answer C is required");
         }
         this.answerC = answerC;
     }
 
-    private void setAnswerD(String answerD) {
+    public void setAnswerD(String answerD) {
         if (answerD == null || answerD.isBlank()) {
             throw new ValidationException("Answer D is required");
         }
         this.answerD = answerD;
     }
 
-    private void setCorrectAnswer(QuizAnswerOption correctAnswer) {
+    public void setCorrectAnswer(QuizAnswerOption correctAnswer) {
         if (correctAnswer == null) {
             throw new ValidationException("Correct answer is required");
         }
@@ -107,7 +107,7 @@ public class QuizGame {
         this.correctAnswer = correctAnswer;
     }
 
-    private void setExplanationText(String explanationText) {
+    public void setExplanationText(String explanationText) {
         if (explanationText == null || explanationText.isBlank()) {
             throw new ValidationException("Explanation text is required");
         }

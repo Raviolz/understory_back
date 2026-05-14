@@ -42,35 +42,39 @@ public class UploadGame {
         setReferenceImageUrl(referenceImageUrl);
     }
 
-    private void setExperience(Experience experience) {
+    public void setExperience(Experience experience) {
         if (experience == null) {
             throw new ValidationException("Experience is required");
         }
         this.experience = experience;
     }
 
-    private void setPromptText(String promptText) {
+    public void setPromptText(String promptText) {
         if (promptText == null || promptText.isBlank()) {
             throw new ValidationException("Prompt text is required");
         }
         this.promptText = promptText;
     }
 
-    private void setTargetDescription(String targetDescription) {
+    public void setTargetDescription(String targetDescription) {
         if (targetDescription == null || targetDescription.isBlank()) {
             throw new ValidationException("Target description is required");
         }
         this.targetDescription = targetDescription;
     }
 
-    private void setReferenceImageUrl(String referenceImageUrl) {
-        this.referenceImageUrl = referenceImageUrl.trim();
+    public void setReferenceImageUrl(String referenceImageUrl) {
+        this.referenceImageUrl = referenceImageUrl != null && !referenceImageUrl.isBlank()
+                ? referenceImageUrl.trim()
+                : null;
     }
 
-    private void setValidationHint(String validationHint) {
-        this.validationHint = validationHint;
-    }
 
+    public void setValidationHint(String validationHint) {
+        this.validationHint = validationHint != null && !validationHint.isBlank()
+                ? validationHint.trim()
+                : null;
+    }
 
     @Override
     public String toString() {

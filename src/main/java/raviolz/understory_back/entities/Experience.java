@@ -39,7 +39,7 @@ public class Experience {
     @Column(name = "reveal_title", nullable = false, length = 300)
     private String revealTitle;
 
-    @Column(name = "reveal_img_url")
+    @Column(name = "reveal_image_url")
     private String revealImageUrl;
 
     @Column(name = "reveal_text", nullable = false, length = 3000)
@@ -70,7 +70,7 @@ public class Experience {
         setHookText(hookText);
         setIntroText(introText);
         setRevealTitle(revealTitle);
-        this.revealImageUrl = revealImageUrl.trim();
+        setRevealImageUrl(revealImageUrl);
         setRevealText(revealText);
         setJournalText(journalText);
         setXpReward(xpReward);
@@ -129,8 +129,10 @@ public class Experience {
         this.revealTitle = revealTitle;
     }
 
-    public void setRevealImageUrl(String revealImage) {
-        this.revealImageUrl = revealImageUrl.trim();
+    public void setRevealImageUrl(String revealImageUrl) {
+        this.revealImageUrl = revealImageUrl != null && !revealImageUrl.isBlank()
+                ? revealImageUrl.trim()
+                : null;
     }
 
     public void setRevealText(String revealText) {

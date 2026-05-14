@@ -61,8 +61,8 @@ public class LocalBusiness {
         setName(name);
         setAddress(address);
         setDescription(description);
-        this.websiteUrl = websiteUrl;
-        this.imageUrl = imageUrl;
+        setWebsiteUrl(websiteUrl);
+        setImageUrl(imageUrl);
         setLongitude(longitude);
         setLatitude(latitude);
         this.active = false;
@@ -108,20 +108,17 @@ public class LocalBusiness {
         this.description = description;
     }
 
-    public void updateWebsiteUrl(String websiteUrl) {
-        if (websiteUrl == null || websiteUrl.isBlank()) {
-            throw new ValidationException("Website URL is required");
-        }
 
-        this.websiteUrl = websiteUrl.trim();
+    public void setWebsiteUrl(String websiteUrl) {
+        this.websiteUrl = websiteUrl != null && !websiteUrl.isBlank()
+                ? websiteUrl.trim()
+                : null;
     }
 
-    public void updateImageUrl(String imageUrl) {
-        if (imageUrl == null || imageUrl.isBlank()) {
-            throw new ValidationException("Image URL is required");
-        }
-
-        this.imageUrl = imageUrl.trim();
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl != null && !imageUrl.isBlank()
+                ? imageUrl.trim()
+                : null;
     }
 
     public void setLongitude(double longitude) {

@@ -44,7 +44,7 @@ public class City {
         setLongitude(longitude);
         setLatitude(latitude);
         setDescription(description);
-        this.coverImageUrl = coverImageUrl.trim();
+        setCoverImageUrl(coverImageUrl);
         this.active = false;
     }
 
@@ -83,12 +83,12 @@ public class City {
         this.description = description;
     }
 
-    public void updateCoverImageUrl(String coverImageUrl) {
-        if (coverImageUrl == null || coverImageUrl.isBlank()) {
-            throw new ValidationException("Cover image url is required");
-        }
-        this.coverImageUrl = coverImageUrl.trim();
+    public void setCoverImageUrl(String coverImageUrl) {
+        this.coverImageUrl = coverImageUrl != null && !coverImageUrl.isBlank()
+                ? coverImageUrl.trim()
+                : null;
     }
+
 
     public void publish() {
         this.active = true;
