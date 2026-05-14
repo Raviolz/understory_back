@@ -34,3 +34,6 @@ build/
 
 ### ENV ###
 env.properties
+
+# Local internal test runners
+src/main/java/raviolz/understory_back/internalTest/
