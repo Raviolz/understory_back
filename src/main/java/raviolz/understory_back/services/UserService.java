@@ -1,0 +1,78 @@
+package raviolz.understory_back.services;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import raviolz.understory_back.entities.Role;
+import raviolz.understory_back.entities.User;
+import raviolz.understory_back.exceptions.NotFoundException;
+import raviolz.understory_back.exceptions.ValidationException;
+import raviolz.understory_back.payloads.UpdateUserProfileDTO;
+import raviolz.understory_back.payloads.UserDTO;
+import raviolz.understory_back.repositories.UserRepository;
+
+import java.util.UUID;
+
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+    private final RoleService roleService;
+
+    public UserService(UserRepository userRepository, RoleService roleService) {
+        this.userRepository = userRepository;
+        this.roleService = roleService;
+    }
+
+    public User save(UserDTO body) {
+        if (userRepository.existsByEmail(body.email().trim().toLowerCase())) {
+            throw new ValidationException("Email " + body.email() + " already in use");
+        }
+
+        if (userRepository.existsByUsername(body.username().trim())) {
+            throw new ValidationException("Username " + body.username() + " already in use");
+        }
+
+        Role userRole = roleService.findByCode("USER");
+
+        User user = new User(
+                body.username(),
+                body.name(),
+                body.surname(),
+                body.email(),
+                body.password(), // da codificare in auth branch
+                userRole
+        );
+
+        return userRepository.save(user);
+    }
+
+    public Page<User> findAll(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return userRepository.findAll(pageable);
+    }
+
+    public User findById(UUID id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User with id " + id + " not found"));
+    }
+
+    public User updateProfile(UUID id, UpdateUserProfileDTO body) {
+        User found = findById(id);
+
+        String normalizedUsername = body.username().trim();
+
+        if (!found.getUsername().equals(normalizedUsername) &&
+                userRepository.existsByUsername(normalizedUsername)) {
+            throw new ValidationException("Username " + body.username() + " already in use");
+        }
+
+        found.setUsername(body.username());
+        found.setName(body.name());
+        found.setSurname(body.surname());
+
+        return userRepository.save(found);
+    }
+}
