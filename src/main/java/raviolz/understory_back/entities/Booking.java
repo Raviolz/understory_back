@@ -67,6 +67,36 @@ public class Booking {
         this.peopleCount = peopleCount;
     }
 
+    // domain methods
+
+    public void confirm() {
+        if (this.status == BookingStatus.CANCELLED) {
+            throw new ValidationException("Cancelled booking cannot be confirmed");
+        }
+
+        if (this.status == BookingStatus.COMPLETED) {
+            throw new ValidationException("Completed booking cannot be confirmed");
+        }
+
+        this.status = BookingStatus.CONFIRMED;
+    }
+
+    public void cancel() {
+        if (this.status == BookingStatus.COMPLETED) {
+            throw new ValidationException("Completed booking cannot be cancelled");
+        }
+
+        this.status = BookingStatus.CANCELLED;
+    }
+
+    public void complete() {
+        if (this.status != BookingStatus.CONFIRMED) {
+            throw new ValidationException("Only confirmed bookings can be completed");
+        }
+
+        this.status = BookingStatus.COMPLETED;
+    }
+
 
     public void updateNotes(String notes) {
         this.notes = notes;
@@ -82,4 +112,5 @@ public class Booking {
                 ", notes='" + notes + '\'' +
                 ", peopleCount=" + peopleCount +
                 '}';
+    }
 }

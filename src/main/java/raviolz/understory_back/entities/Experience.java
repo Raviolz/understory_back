@@ -148,9 +148,10 @@ public class Experience {
     }
 
     public void setDifficulty(int difficulty) {
-        if (difficulty <= 0) {
-            throw new ValidationException("Difficulty must be a positive number");
+        if (difficulty < 1 || difficulty > 5) {
+            throw new ValidationException("Difficulty must be between 1 and 5");
         }
+
         this.difficulty = difficulty;
     }
 

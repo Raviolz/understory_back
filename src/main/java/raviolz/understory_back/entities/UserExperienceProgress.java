@@ -103,6 +103,38 @@ public class UserExperienceProgress {
     }
 
 
+    // domain methods
+
+    public void complete() {
+        if (this.status == ProgressStatus.COMPLETED) {
+            return;
+        }
+
+        this.status = ProgressStatus.COMPLETED;
+        this.completedAt = LocalDateTime.now();
+    }
+
+    public boolean isCompleted() { // controllo a differenza di complete() che imposta
+        return this.status == ProgressStatus.COMPLETED;
+    }
+
+    public void markXpAwarded() {
+        if (!isCompleted()) { // controllo sull enum
+            throw new ValidationException("Cannot award XP before completing the experience");
+        }
+        if (this.xpAwarded) {
+            return;
+        }
+        this.xpAwarded = true;
+    }
+
+    public void updateUserNote(String userNote) { // se aggiornando la nota l utente non mette nulla invece che salvare " " salvo nul nel db per chiarezza e ordine
+        this.userNote = userNote != null && !userNote.isBlank()
+                ? userNote.trim()
+                : null;
+    }
+
+
     @Override
     public String toString() {
         return "UserExperienceProgress{" +

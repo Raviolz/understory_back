@@ -99,6 +99,20 @@ public class User {
         this.email = email.trim();
     }
 
+    // domain methods
+
+    private void recalculateLevel() {
+        this.level = (this.xp / 100) + 1; // NB: E' un int quindi ad esempio 98/100 = 0 senza parte decimale +1 --> lev 1
+    }
+
+    public void addXp(int amount) {
+        if (amount <= 0) {
+            throw new ValidationException("XP amount must be positive");
+        }
+        this.xp += amount;
+        recalculateLevel();
+    }
+
 
     @Override
     public String toString() {

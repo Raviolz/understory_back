@@ -114,6 +114,14 @@ public class QuizGame {
         this.explanationText = explanationText;
     }
 
+    // domain methods
+
+
+    public boolean isCorrectAnswer(QuizAnswerOption selectedAnswer) {
+        return selectedAnswer != null && this.correctAnswer == selectedAnswer;
+    }
+
+
     @Override
     public String toString() {
         return "QuizGame{" +

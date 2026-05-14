@@ -105,7 +105,7 @@ public class Reward {
         this.rewardType = rewardType;
     }
 
-    public void setValidityPeriod(LocalDate validFrom, LocalDate validUntil) { // controllo su LocalDate.now() nei service per snellezza e casomai correzioni codici sbagliati del giorno prima
+    public void setValidityPeriod(LocalDate validFrom, LocalDate validUntil) { // controllo che from sia prima di until
         if (validFrom == null) {
             throw new ValidationException("Valid from date is required");
         }
@@ -128,6 +128,20 @@ public class Reward {
 
     public void unpublish() {
         this.active = false;
+    }
+
+// domain methods
+
+    public boolean isExpired() {
+        return LocalDate.now().isAfter(this.validUntil);
+    }
+
+    public boolean isCurrentlyValid() { // controllo che sia pubblicato (attivo) e che sia utilizzabile in termini di finestra di tempo in cui e' possibile utilizzarlo rispetto ad oggi
+        LocalDate today = LocalDate.now(); // reward valido come struttura ma non utilizzabile oggi
+
+        return this.active && // attivo = true
+                !today.isBefore(this.validFrom) && // oggi NON è prima della data di inizio
+                !today.isAfter(this.validUntil); // oggi NON e' dopo della data di fine
     }
 
 

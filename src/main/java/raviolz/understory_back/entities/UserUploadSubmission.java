@@ -88,6 +88,26 @@ public class UserUploadSubmission {
         this.submittedAt = submittedAt;
     }
 
+    // domain methods
+
+    public void approve() {
+        this.status = UploadSubmissionStatus.APPROVED;
+    }
+
+    public void reject() {
+        this.status = UploadSubmissionStatus.REJECTED;
+    }
+
+    public void replaceImage(String imageUrl) {
+        if (imageUrl == null || imageUrl.isBlank()) {
+            throw new ValidationException("Image URL is required");
+        }
+
+        this.imageUrl = imageUrl.trim();
+        this.status = UploadSubmissionStatus.SUBMITTED;
+        this.submittedAt = LocalDateTime.now();
+    }
+
     @Override
     public String toString() {
         return "UserUploadSubmission{" +
