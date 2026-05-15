@@ -98,7 +98,7 @@ public class UserUploadSubmission {
         this.status = UploadSubmissionStatus.REJECTED;
     }
 
-    public void replaceImage(String imageUrl) {
+    public void resubmitImage(String imageUrl) {
         if (imageUrl == null || imageUrl.isBlank()) {
             throw new ValidationException("Image URL is required");
         }
