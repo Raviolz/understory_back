@@ -55,7 +55,7 @@ public class Reward {
         setExperience(experience);
         setTitle(title);
         setDescription(description);
-        this.discountCode = discountCode;
+        setDiscountCode(discountCode);
         setRewardType(rewardType);
         setValidityPeriod(validFrom, validUntil); // interconnessi inutile separarli per controlli
         this.active = false;
@@ -93,8 +93,10 @@ public class Reward {
         this.description = description.trim();
     }
 
-    public void setDiscountCode(String discountCode) {
-        this.discountCode = discountCode;
+    public void setDiscountCode(String discountCode) { // opzionale non deve lanciare eccezione se null
+        this.discountCode = discountCode != null && !discountCode.isBlank()
+                ? discountCode.trim()
+                : null;
     }
 
     public void setRewardType(RewardType rewardType) {
