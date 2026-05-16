@@ -10,7 +10,7 @@ import raviolz.understory_back.services.PointOfInterestService;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/points")
+@RequestMapping("/points")
 public class PublicPointOfInterestController {
 
     private final PointOfInterestService pointOfInterestService;

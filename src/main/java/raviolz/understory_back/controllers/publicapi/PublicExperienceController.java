@@ -10,7 +10,7 @@ import raviolz.understory_back.services.ExperienceService;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/experiences")
+@RequestMapping("/experiences")
 public class PublicExperienceController {
 
     private final ExperienceService experienceService;
