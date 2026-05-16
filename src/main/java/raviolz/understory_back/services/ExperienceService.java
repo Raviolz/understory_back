@@ -84,6 +84,19 @@ public class ExperienceService {
         return experienceRepository.save(found);
     }
 
+    public Page<Experience> findActiveByPointOfInterest(UUID pointOfInterestId, int page, int size, String sortBy) {
+        pointOfInterestService.findById(pointOfInterestId);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return experienceRepository.findByPointOfInterestIdAndActiveTrue(pointOfInterestId, pageable);
+    }
+
+
+    public Experience findActiveById(UUID id) {
+        return experienceRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new NotFoundException("Active experience with id " + id + " not found"));
+    }
+
     public Experience publish(UUID id) {
         Experience found = findById(id);
         found.publish();
@@ -95,4 +108,5 @@ public class ExperienceService {
         found.unpublish();
         return experienceRepository.save(found);
     }
+
 }

@@ -50,6 +50,11 @@ public class PointOfInterestService {
                 .orElseThrow(() -> new NotFoundException("Point of interest with id " + id + " not found"));
     }
 
+    public PointOfInterest findActiveById(UUID id) {
+        return pointOfInterestRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new NotFoundException("Active point of interest with id " + id + " not found"));
+    }
+
     public PointOfInterest update(UUID id, UpdatePointOfInterestDTO body) {
         PointOfInterest found = findById(id);
         City city = cityService.findById(body.cityId());
@@ -61,6 +66,13 @@ public class PointOfInterestService {
         found.setLatitude(body.latitude());
 
         return pointOfInterestRepository.save(found);
+    }
+
+    public Page<PointOfInterest> findActiveByCity(UUID cityId, int page, int size, String sortBy) {
+        cityService.findById(cityId);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return pointOfInterestRepository.findByCityIdAndActiveTrue(cityId, pageable);
     }
 
     public PointOfInterest publish(UUID id) {

@@ -57,6 +57,16 @@ public class CityService {
         return cityRepository.save(found);
     }
 
+    public Page<City> findActive(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return cityRepository.findByActiveTrue(pageable);
+    }
+
+    public City findActiveById(UUID id) {
+        return cityRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new NotFoundException("Active city with id " + id + " not found"));
+    }
+
     public City publish(UUID id) {
         City found = findById(id);
         found.publish();
@@ -68,4 +78,5 @@ public class CityService {
         found.unpublish();
         return cityRepository.save(found);
     }
+
 }
