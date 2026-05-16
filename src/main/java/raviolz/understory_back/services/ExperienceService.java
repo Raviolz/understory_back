@@ -94,7 +94,7 @@ public class ExperienceService {
 
     public Experience findActiveById(UUID id) {
         return experienceRepository.findByIdAndActiveTrue(id)
-                .orElseThrow(() -> new NotFoundException("Active experience with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException("Experience with id " + id + " not found"));
     }
 
     public Experience publish(UUID id) {
