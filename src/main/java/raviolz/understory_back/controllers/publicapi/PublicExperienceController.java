@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import raviolz.understory_back.entities.Experience;
+import raviolz.understory_back.payloads.responses.ExperienceResponseDTO;
 import raviolz.understory_back.services.ExperienceService;
 
 import java.util.UUID;
@@ -20,7 +20,7 @@ public class PublicExperienceController {
     }
 
     @GetMapping("/{experienceId}")
-    public Experience findActiveById(@PathVariable UUID experienceId) {
-        return experienceService.findActiveById(experienceId);
+    public ExperienceResponseDTO findActiveById(@PathVariable UUID experienceId) {
+        return ExperienceResponseDTO.fromEntity(experienceService.findById(experienceId));
     }
 }

@@ -2,8 +2,8 @@ package raviolz.understory_back.controllers.publicapi;
 
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import raviolz.understory_back.entities.City;
-import raviolz.understory_back.entities.PointOfInterest;
+import raviolz.understory_back.payloads.responses.CityResponseDTO;
+import raviolz.understory_back.payloads.responses.PointOfInterestResponseDTO;
 import raviolz.understory_back.services.CityService;
 import raviolz.understory_back.services.PointOfInterestService;
 
@@ -22,22 +22,22 @@ public class PublicCityController {
     }
 
     @GetMapping
-    public Page<City> findAllActive(@RequestParam(defaultValue = "0") int page,
-                                    @RequestParam(defaultValue = "10") int size,
-                                    @RequestParam(defaultValue = "name") String sortBy) {
-        return cityService.findActive(page, size, sortBy);
+    public Page<CityResponseDTO> findAllActive(@RequestParam(defaultValue = "0") int page,
+                                               @RequestParam(defaultValue = "10") int size,
+                                               @RequestParam(defaultValue = "name") String sortBy) {
+        return cityService.findActive(page, size, sortBy).map(city -> CityResponseDTO.fromEntity(city));
     }
 
     @GetMapping("/{cityId}")
-    public City findActiveById(@PathVariable UUID cityId) {
-        return cityService.findActiveById(cityId);
+    public CityResponseDTO findActiveById(@PathVariable UUID cityId) {
+        return CityResponseDTO.fromEntity(cityService.findById(cityId));
     }
 
     @GetMapping("/{cityId}/points")
-    public Page<PointOfInterest> findActivePointsByCity(@PathVariable UUID cityId,
-                                                        @RequestParam(defaultValue = "0") int page,
-                                                        @RequestParam(defaultValue = "10") int size,
-                                                        @RequestParam(defaultValue = "name") String sortBy) {
-        return pointOfInterestService.findActiveByCity(cityId, page, size, sortBy);
+    public Page<PointOfInterestResponseDTO> findActivePointsByCity(@PathVariable UUID cityId,
+                                                                   @RequestParam(defaultValue = "0") int page,
+                                                                   @RequestParam(defaultValue = "10") int size,
+                                                                   @RequestParam(defaultValue = "name") String sortBy) {
+        return pointOfInterestService.findActiveByCity(cityId, page, size, sortBy).map(point -> PointOfInterestResponseDTO.fromEntity(point));
     }
 }
