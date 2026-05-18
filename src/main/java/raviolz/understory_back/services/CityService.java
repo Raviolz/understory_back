@@ -64,7 +64,7 @@ public class CityService {
 
     public City findActiveById(UUID id) {
         return cityRepository.findByIdAndActiveTrue(id)
-                .orElseThrow(() -> new NotFoundException("Active city with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException("City with id " + id + " not found"));
     }
 
     public City publish(UUID id) {

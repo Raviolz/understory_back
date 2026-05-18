@@ -52,7 +52,7 @@ public class PointOfInterestService {
 
     public PointOfInterest findActiveById(UUID id) {
         return pointOfInterestRepository.findByIdAndActiveTrue(id)
-                .orElseThrow(() -> new NotFoundException("Active point of interest with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException("Point of interest with id " + id + " not found"));
     }
 
     public PointOfInterest update(UUID id, UpdatePointOfInterestDTO body) {
