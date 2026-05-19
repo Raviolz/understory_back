@@ -1,5 +1,6 @@
 package raviolz.understory_back.services;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,7 @@ import raviolz.understory_back.enums.UploadSubmissionStatus;
 import raviolz.understory_back.exceptions.NotFoundException;
 import raviolz.understory_back.exceptions.ValidationException;
 import raviolz.understory_back.payloads.UserUploadSubmissionDTO;
+import raviolz.understory_back.payloads.responses.UploadReviewResponseDTO;
 import raviolz.understory_back.repositories.UserUploadSubmissionRepository;
 
 import java.util.Optional;
@@ -24,15 +26,18 @@ public class UserUploadSubmissionService {
     private final UserUploadSubmissionRepository userUploadSubmissionRepository;
     private final UserService userService;
     private final ExperienceService experienceService;
+    private final UserExperienceProgressService userExperienceProgressService;
 
     public UserUploadSubmissionService(
             UserUploadSubmissionRepository userUploadSubmissionRepository,
             UserService userService,
-            ExperienceService experienceService
+            ExperienceService experienceService,
+            UserExperienceProgressService userExperienceProgressService
     ) {
         this.userUploadSubmissionRepository = userUploadSubmissionRepository;
         this.userService = userService;
         this.experienceService = experienceService;
+        this.userExperienceProgressService = userExperienceProgressService;
     }
 
     public UserUploadSubmission submit(UserUploadSubmissionDTO body) {
@@ -106,15 +111,49 @@ public class UserUploadSubmissionService {
         return userUploadSubmissionRepository.findByStatus(status, pageable);
     }
 
-    public UserUploadSubmission approve(UUID id) {
+    @Transactional
+    public UploadReviewResponseDTO approve(UUID id) {
         UserUploadSubmission found = findById(id);
+
         found.approve();
-        return userUploadSubmissionRepository.save(found);
+        userUploadSubmissionRepository.save(found);
+
+        int xpGained = userExperienceProgressService.completeAndAwardXp(
+                found.getUser().getId(),
+                found.getExperience().getId()
+        );
+
+        String message = xpGained > 0
+                ? "Upload approved. Experience completed."
+                : "Upload approved. Experience was already completed.";
+
+        return new UploadReviewResponseDTO(
+                found.getId(),
+                found.getUser().getId(),
+                found.getExperience().getId(),
+                found.getStatus(),
+                true,
+                xpGained,
+                message
+        );
     }
 
-    public UserUploadSubmission reject(UUID id) {
+    public UploadReviewResponseDTO reject(UUID id) {
         UserUploadSubmission found = findById(id);
+
         found.reject();
-        return userUploadSubmissionRepository.save(found);
+        UserUploadSubmission saved = userUploadSubmissionRepository.save(found);
+
+        return new UploadReviewResponseDTO(
+                saved.getId(),
+                saved.getUser().getId(),
+                saved.getExperience().getId(),
+                saved.getStatus(),
+                false,
+                0,
+                "Upload rejected. User can submit a new image."
+        );
     }
+
+
 }
