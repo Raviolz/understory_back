@@ -24,8 +24,8 @@ public class Reward {
     private LocalBusiness business;
 
     @ManyToOne
-    @JoinColumn(name = "experience_id", nullable = false)
-    private Experience experience;
+    @JoinColumn(name = "city_id", nullable = false)
+    private City city;
 
     @Column(nullable = false, length = 150)
     private String title;
@@ -49,10 +49,10 @@ public class Reward {
     @Column(nullable = false)
     private boolean active = false;
 
-    public Reward(LocalBusiness business, Experience experience, String title, String description, String discountCode, RewardType rewardType, LocalDate validFrom, LocalDate validUntil
+    public Reward(LocalBusiness business, City city, String title, String description, String discountCode, RewardType rewardType, LocalDate validFrom, LocalDate validUntil
     ) {
         setBusiness(business);
-        setExperience(experience);
+        setCity(city);
         setTitle(title);
         setDescription(description);
         setDiscountCode(discountCode);
@@ -69,12 +69,12 @@ public class Reward {
         this.business = business;
     }
 
-    public void setExperience(Experience experience) {
-        if (experience == null) {
-            throw new ValidationException("Experience is required");
+    public void setCity(City city) {
+        if (city == null) {
+            throw new ValidationException("City is required");
         }
 
-        this.experience = experience;
+        this.city = city;
     }
 
     public void setTitle(String title) {
@@ -152,7 +152,7 @@ public class Reward {
         return "Reward{" +
                 "id=" + id +
                 ", business=" + (business != null ? business.getName() : "N/A") +
-                ", experience=" + (experience != null ? experience.getTitle() : "N/A") +
+                ", city=" + (city != null ? city.getName() : "N/A") +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", discountCode='" + discountCode + '\'' +

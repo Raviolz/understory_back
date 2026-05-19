@@ -5,7 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import raviolz.understory_back.entities.Experience;
+import raviolz.understory_back.entities.City;
 import raviolz.understory_back.entities.LocalBusiness;
 import raviolz.understory_back.entities.Reward;
 import raviolz.understory_back.enums.RewardType;
@@ -21,25 +21,29 @@ public class RewardService {
 
     private final RewardRepository rewardRepository;
     private final LocalBusinessService localBusinessService;
-    private final ExperienceService experienceService;
+    private final CityService cityService;
 
     public RewardService(
             RewardRepository rewardRepository,
             LocalBusinessService localBusinessService,
-            ExperienceService experienceService
+            CityService cityService
     ) {
         this.rewardRepository = rewardRepository;
         this.localBusinessService = localBusinessService;
-        this.experienceService = experienceService;
+        this.cityService = cityService;
     }
 
     public Reward save(RewardDTO body) {
         LocalBusiness business = localBusinessService.findById(body.businessId());
-        Experience experience = experienceService.findById(body.experienceId());
+        City city = cityService.findById(body.cityId());
+
+        if (!business.getCity().getId().equals(city.getId())) {
+            throw new ValidationException("Business does not belong to selected city");
+        }
 
         Reward reward = new Reward(
                 business,
-                experience,
+                city,
                 body.title(),
                 body.description(),
                 body.discountCode(),
@@ -73,11 +77,11 @@ public class RewardService {
         return rewardRepository.findByBusinessId(businessId, pageable);
     }
 
-    public Page<Reward> findByExperience(UUID experienceId, int page, int size, String sortBy) {
-        experienceService.findById(experienceId);
+    public Page<Reward> findByCity(UUID cityId, int page, int size, String sortBy) {
+        cityService.findById(cityId);
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        return rewardRepository.findByExperienceId(experienceId, pageable);
+        return rewardRepository.findByCityId(cityId, pageable);
     }
 
     public Page<Reward> findByRewardType(RewardType rewardType, int page, int size, String sortBy) {
@@ -93,10 +97,14 @@ public class RewardService {
         Reward found = findById(id);
 
         LocalBusiness business = localBusinessService.findById(body.businessId());
-        Experience experience = experienceService.findById(body.experienceId());
+        City city = cityService.findById(body.cityId());
+
+        if (!business.getCity().getId().equals(city.getId())) {
+            throw new ValidationException("Business does not belong to selected city");
+        }
 
         found.setBusiness(business);
-        found.setExperience(experience);
+        found.setCity(city);
         found.setTitle(body.title());
         found.setDescription(body.description());
         found.setDiscountCode(body.discountCode());
