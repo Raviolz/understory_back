@@ -83,4 +83,24 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
     }
+
+    public User promoteToAdmin(UUID userId) {
+        User found = findById(userId);
+
+        Role adminRole = roleService.findByCode("ADMIN");
+
+        found.setRole(adminRole);
+
+        return userRepository.save(found);
+    }
+
+    public User downgradeToUser(UUID userId) {
+        User found = findById(userId);
+
+        Role userRole = roleService.findByCode("USER");
+
+        found.setRole(userRole);
+
+        return userRepository.save(found);
+    }
 }

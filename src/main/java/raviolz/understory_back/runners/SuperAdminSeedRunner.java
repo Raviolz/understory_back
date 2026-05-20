@@ -36,7 +36,7 @@ public class SuperAdminSeedRunner implements CommandLineRunner {
                     "superadmin",
                     "Super",
                     "Admin",
-                    "superadmin@understory.local",
+                    "superadmin@understory.com",
                     bcrypt.encode("superadmin123"),
                     superAdminRole
             );
