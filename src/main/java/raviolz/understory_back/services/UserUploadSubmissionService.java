@@ -27,17 +27,20 @@ public class UserUploadSubmissionService {
     private final UserService userService;
     private final ExperienceService experienceService;
     private final UserExperienceProgressService userExperienceProgressService;
+    private final UserRewardService userRewardService;
 
     public UserUploadSubmissionService(
             UserUploadSubmissionRepository userUploadSubmissionRepository,
             UserService userService,
             ExperienceService experienceService,
-            UserExperienceProgressService userExperienceProgressService
+            UserExperienceProgressService userExperienceProgressService,
+            UserRewardService userRewardService
     ) {
         this.userUploadSubmissionRepository = userUploadSubmissionRepository;
         this.userService = userService;
         this.experienceService = experienceService;
         this.userExperienceProgressService = userExperienceProgressService;
+        this.userRewardService = userRewardService;
     }
 
     public UserUploadSubmission submit(UserUploadSubmissionDTO body) {
@@ -122,6 +125,13 @@ public class UserUploadSubmissionService {
                 found.getUser().getId(),
                 found.getExperience().getId()
         );
+// Se l'upload completa davvero la experience per la prima volta, provo a sbloccare un reward random della città.
+        if (xpGained > 0) {
+            userRewardService.unlockRandomRewardForExperienceCity(
+                    found.getUser().getId(),
+                    found.getExperience().getId()
+            );
+        }
 
         String message = xpGained > 0
                 ? "Upload approved. Experience completed."

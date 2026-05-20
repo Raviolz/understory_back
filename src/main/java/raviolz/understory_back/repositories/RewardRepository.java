@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import raviolz.understory_back.entities.Reward;
 import raviolz.understory_back.enums.RewardType;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -19,4 +20,6 @@ public interface RewardRepository extends JpaRepository<Reward, UUID> {
     Page<Reward> findByRewardType(RewardType rewardType, Pageable pageable);
 
     Page<Reward> findByActiveTrue(Pageable pageable);
+
+    List<Reward> findByCityIdAndActiveTrue(UUID cityId);
 }

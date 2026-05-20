@@ -15,17 +15,20 @@ public class QuizGameplayService {
     private final ExperienceService experienceService;
     private final QuizGameService quizGameService;
     private final UserExperienceProgressService userExperienceProgressService;
+    private final UserRewardService userRewardService;
 
     public QuizGameplayService(
             UserService userService,
             ExperienceService experienceService,
             QuizGameService quizGameService,
-            UserExperienceProgressService userExperienceProgressService
+            UserExperienceProgressService userExperienceProgressService,
+            UserRewardService userRewardService
     ) {
         this.userService = userService;
         this.experienceService = experienceService;
         this.quizGameService = quizGameService;
         this.userExperienceProgressService = userExperienceProgressService;
+        this.userRewardService = userRewardService;
     }
 
     public QuizAnswerResponseDTO submitAnswer(QuizAnswerDTO body) {
@@ -53,6 +56,13 @@ public class QuizGameplayService {
                 body.userId(),
                 body.experienceId()
         );
+
+        if (xpGained > 0) {
+            userRewardService.unlockRandomRewardForExperienceCity(
+                    body.userId(),
+                    body.experienceId()
+            );
+        }
 
         String message = xpGained > 0
                 ? "Correct answer. Experience completed."

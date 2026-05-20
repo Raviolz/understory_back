@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import raviolz.understory_back.entities.Experience;
 import raviolz.understory_back.entities.Reward;
 import raviolz.understory_back.entities.User;
 import raviolz.understory_back.entities.UserReward;
@@ -12,9 +13,13 @@ import raviolz.understory_back.enums.UserRewardStatus;
 import raviolz.understory_back.exceptions.NotFoundException;
 import raviolz.understory_back.exceptions.ValidationException;
 import raviolz.understory_back.payloads.UserRewardDTO;
+import raviolz.understory_back.repositories.RewardRepository;
 import raviolz.understory_back.repositories.UserRewardRepository;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class UserRewardService {
@@ -22,15 +27,22 @@ public class UserRewardService {
     private final UserRewardRepository userRewardRepository;
     private final UserService userService;
     private final RewardService rewardService;
+    private final ExperienceService experienceService;
+    private final RewardRepository rewardRepository;
 
     public UserRewardService(
             UserRewardRepository userRewardRepository,
             UserService userService,
-            RewardService rewardService
+            RewardService rewardService,
+            ExperienceService experienceService,
+            RewardRepository rewardRepository
+
     ) {
         this.userRewardRepository = userRewardRepository;
         this.userService = userService;
         this.rewardService = rewardService;
+        this.experienceService = experienceService;
+        this.rewardRepository = rewardRepository;
     }
 
     public UserReward unlock(UserRewardDTO body) {
@@ -111,5 +123,29 @@ public class UserRewardService {
         UserReward found = findById(id);
         found.markAsExpired();
         return userRewardRepository.save(found);
+    }
+
+    public Optional<UserReward> unlockRandomRewardForExperienceCity(UUID userId, UUID experienceId) {
+        User user = userService.findById(userId);
+        Experience experience = experienceService.findById(experienceId);
+
+        UUID cityId = experience.getPointOfInterest().getCity().getId();
+
+        List<Reward> availableRewards = rewardRepository.findByCityIdAndActiveTrue(cityId)
+                .stream()
+                .filter(Reward::isCurrentlyValid)
+                .filter(reward -> !userRewardRepository.existsByUserIdAndRewardId(userId, reward.getId()))
+                .toList();
+
+        if (availableRewards.isEmpty()) {
+            return Optional.empty();
+        }
+
+        int randomIndex = ThreadLocalRandom.current().nextInt(availableRewards.size());
+        Reward selectedReward = availableRewards.get(randomIndex);
+
+        UserReward userReward = new UserReward(user, selectedReward);
+
+        return Optional.of(userRewardRepository.save(userReward));
     }
 }
