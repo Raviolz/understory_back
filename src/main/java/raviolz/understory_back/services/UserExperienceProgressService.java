@@ -11,6 +11,7 @@ import raviolz.understory_back.entities.User;
 import raviolz.understory_back.entities.UserExperienceProgress;
 import raviolz.understory_back.enums.ProgressStatus;
 import raviolz.understory_back.exceptions.NotFoundException;
+import raviolz.understory_back.exceptions.ValidationException;
 import raviolz.understory_back.payloads.UserExperienceProgressDTO;
 import raviolz.understory_back.payloads.UserNoteDTO;
 import raviolz.understory_back.repositories.UserExperienceProgressRepository;
@@ -118,5 +119,18 @@ public class UserExperienceProgressService {
         userExperienceProgressRepository.save(progress);
 
         return experience.getXpReward();
+    }
+
+
+    public UserExperienceProgress updateUserNoteForUser(UUID userId, UUID progressId, UserNoteDTO body) {
+        UserExperienceProgress found = findById(progressId);
+
+        if (!found.getUser().getId().equals(userId)) {
+            throw new ValidationException("You cannot update another user's progress note");
+        }
+
+        found.updateUserNote(body.userNote());
+
+        return userExperienceProgressRepository.save(found);
     }
 }
