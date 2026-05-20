@@ -15,7 +15,7 @@ public interface RewardRepository extends JpaRepository<Reward, UUID> {
 
     Page<Reward> findByBusinessId(UUID businessId, Pageable pageable);
 
-    Page<Reward> findByExperienceId(UUID experienceId, Pageable pageable);
+    Page<Reward> findByCityId(UUID cityId, Pageable pageable);
 
     Page<Reward> findByRewardType(RewardType rewardType, Pageable pageable);
 

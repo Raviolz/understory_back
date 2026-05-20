@@ -13,8 +13,8 @@ public record RewardDTO(
         @NotNull(message = "Business ID is required")
         UUID businessId,
 
-        @NotNull(message = "Experience ID is required")
-        UUID experienceId,
+        @NotNull(message = "City ID is required")
+        UUID cityId,
 
         @NotBlank(message = "Reward title is required")
         @Size(max = 150, message = "Reward title cannot exceed 150 characters")

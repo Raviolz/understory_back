@@ -41,12 +41,12 @@ public class BoRewardController {
         return rewardService.findByBusiness(businessId, page, size, sortBy);
     }
 
-    @GetMapping("/experience/{experienceId}")
-    public Page<Reward> findByExperience(@PathVariable UUID experienceId,
-                                         @RequestParam(defaultValue = "0") int page,
-                                         @RequestParam(defaultValue = "10") int size,
-                                         @RequestParam(defaultValue = "title") String sortBy) {
-        return rewardService.findByExperience(experienceId, page, size, sortBy);
+    @GetMapping("/city/{cityId}")
+    public Page<Reward> findByCity(@PathVariable UUID cityId,
+                                   @RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "10") int size,
+                                   @RequestParam(defaultValue = "title") String sortBy) {
+        return rewardService.findByCity(cityId, page, size, sortBy);
     }
 
     @GetMapping("/type/{rewardType}")
