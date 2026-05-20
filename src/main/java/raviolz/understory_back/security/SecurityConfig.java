@@ -38,6 +38,10 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/auth/**", "/error").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                .requestMatchers("/backoffice/**").hasAnyAuthority("ADMIN", "SUPER_ADMIN")
+                .requestMatchers("/gameplay/**").hasAnyAuthority("USER", "ADMIN", "SUPER_ADMIN")
+
                 .anyRequest().authenticated()
         );
 
