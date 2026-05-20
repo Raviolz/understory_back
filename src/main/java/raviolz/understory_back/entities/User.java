@@ -106,6 +106,15 @@ public class User implements UserDetails {
         this.email = email.trim();
     }
 
+    public void setRole(Role role) {
+        if (role == null) {
+            throw new ValidationException("Role is required");
+        }
+
+        this.role = role;
+    }
+
+
     // domain methods
 
     private void recalculateLevel() {
