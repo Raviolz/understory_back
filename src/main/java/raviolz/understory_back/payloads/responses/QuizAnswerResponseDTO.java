@@ -4,6 +4,8 @@ public record QuizAnswerResponseDTO(
         boolean correct,
         boolean completed,
         int xpAwarded,
+        boolean rewardUnlocked,
+        String rewardTitle,
         String message,
         String explanationText
 ) {

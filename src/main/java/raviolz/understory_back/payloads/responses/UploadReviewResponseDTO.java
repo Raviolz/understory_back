@@ -11,6 +11,8 @@ public record UploadReviewResponseDTO(
         UploadSubmissionStatus status,
         boolean completed,
         int xpGained,
+        boolean rewardUnlocked,
+        String rewardTitle,
         String message
 ) {
 }

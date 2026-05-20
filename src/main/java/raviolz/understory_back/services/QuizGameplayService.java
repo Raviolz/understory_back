@@ -3,10 +3,13 @@ package raviolz.understory_back.services;
 import org.springframework.stereotype.Service;
 import raviolz.understory_back.entities.Experience;
 import raviolz.understory_back.entities.QuizGame;
+import raviolz.understory_back.entities.UserReward;
 import raviolz.understory_back.enums.GameType;
 import raviolz.understory_back.exceptions.ValidationException;
 import raviolz.understory_back.payloads.QuizAnswerDTO;
 import raviolz.understory_back.payloads.responses.QuizAnswerResponseDTO;
+
+import java.util.Optional;
 
 @Service
 public class QuizGameplayService {
@@ -47,6 +50,8 @@ public class QuizGameplayService {
                     false,
                     false,
                     0,
+                    false,
+                    null,
                     "Wrong answer. Try again.",
                     null
             );
@@ -57,12 +62,12 @@ public class QuizGameplayService {
                 body.experienceId()
         );
 
-        if (xpGained > 0) {
-            userRewardService.unlockRandomRewardForExperienceCity(
-                    body.userId(),
-                    body.experienceId()
-            );
-        }
+        Optional<UserReward> unlockedReward = xpGained > 0
+                ? userRewardService.unlockRandomRewardForExperienceCity(
+                body.userId(),
+                body.experienceId()
+        )
+                : Optional.empty();
 
         String message = xpGained > 0
                 ? "Correct answer. Experience completed."
@@ -72,6 +77,8 @@ public class QuizGameplayService {
                 true,
                 true,
                 xpGained,
+                unlockedReward.isPresent(),
+                unlockedReward.map(userReward -> userReward.getReward().getTitle()).orElse(null),
                 message,
                 quizGame.getExplanationText()
         );

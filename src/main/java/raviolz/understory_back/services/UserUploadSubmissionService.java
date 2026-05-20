@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import raviolz.understory_back.entities.Experience;
 import raviolz.understory_back.entities.User;
+import raviolz.understory_back.entities.UserReward;
 import raviolz.understory_back.entities.UserUploadSubmission;
 import raviolz.understory_back.enums.GameType;
 import raviolz.understory_back.enums.UploadSubmissionStatus;
@@ -126,12 +127,12 @@ public class UserUploadSubmissionService {
                 found.getExperience().getId()
         );
 // Se l'upload completa davvero la experience per la prima volta, provo a sbloccare un reward random della città.
-        if (xpGained > 0) {
-            userRewardService.unlockRandomRewardForExperienceCity(
-                    found.getUser().getId(),
-                    found.getExperience().getId()
-            );
-        }
+        Optional<UserReward> unlockedReward = xpGained > 0
+                ? userRewardService.unlockRandomRewardForExperienceCity(
+                found.getUser().getId(),
+                found.getExperience().getId()
+        )
+                : Optional.empty();
 
         String message = xpGained > 0
                 ? "Upload approved. Experience completed."
@@ -144,6 +145,8 @@ public class UserUploadSubmissionService {
                 found.getStatus(),
                 true,
                 xpGained,
+                unlockedReward.isPresent(),
+                unlockedReward.map(userReward -> userReward.getReward().getTitle()).orElse(null),
                 message
         );
     }
@@ -161,6 +164,8 @@ public class UserUploadSubmissionService {
                 saved.getStatus(),
                 false,
                 0,
+                false,
+                null,
                 "Upload rejected. User can submit a new image."
         );
     }
