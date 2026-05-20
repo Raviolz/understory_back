@@ -44,8 +44,8 @@ public class UserUploadSubmissionService {
         this.userRewardService = userRewardService;
     }
 
-    public UserUploadSubmission submit(UserUploadSubmissionDTO body) {
-        User user = userService.findById(body.userId());
+    public UserUploadSubmission submit(UUID userId, UserUploadSubmissionDTO body) {
+        User user = userService.findById(userId);
         Experience experience = experienceService.findById(body.experienceId());
 
         if (experience.getGameType() != GameType.IMAGE_UPLOAD) {
@@ -53,7 +53,7 @@ public class UserUploadSubmissionService {
         }
 
         Optional<UserUploadSubmission> existingSubmission =
-                userUploadSubmissionRepository.findByUserIdAndExperienceId(body.userId(), body.experienceId());
+                userUploadSubmissionRepository.findByUserIdAndExperienceId(userId, body.experienceId());
 
         if (existingSubmission.isPresent()) {
             UserUploadSubmission found = existingSubmission.get();

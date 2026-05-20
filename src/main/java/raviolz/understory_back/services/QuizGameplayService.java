@@ -10,6 +10,7 @@ import raviolz.understory_back.payloads.QuizAnswerDTO;
 import raviolz.understory_back.payloads.responses.QuizAnswerResponseDTO;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class QuizGameplayService {
@@ -34,8 +35,8 @@ public class QuizGameplayService {
         this.userRewardService = userRewardService;
     }
 
-    public QuizAnswerResponseDTO submitAnswer(QuizAnswerDTO body) {
-        userService.findById(body.userId());
+    public QuizAnswerResponseDTO submitAnswer(UUID userId, QuizAnswerDTO body) {
+        userService.findById(userId);
 
         Experience experience = experienceService.findById(body.experienceId());
 
@@ -58,13 +59,13 @@ public class QuizGameplayService {
         }
 // QuizGameplayS controlla se e' giusta, se lo e': UserExperienceProgressS completa l experience e assegna XP solo se non erano già stati assegnati.
         int xpGained = userExperienceProgressService.completeAndAwardXp(
-                body.userId(),
+                userId,
                 body.experienceId()
         );
 
         Optional<UserReward> unlockedReward = xpGained > 0
                 ? userRewardService.unlockRandomRewardForExperienceCity(
-                body.userId(),
+                userId,
                 body.experienceId()
         )
                 : Optional.empty();

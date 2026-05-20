@@ -1,6 +1,7 @@
 package raviolz.understory_back.exceptions;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,7 +11,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import raviolz.understory_back.payloads.ErrorsDTO;
 
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -68,6 +68,12 @@ public class ErrorsHandler {
     public ErrorsDTO handleNoResourceFound(NoResourceFoundException ex) {
         return new ErrorsDTO("Endpoint not found", LocalDateTime.now());
     }
+    
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorsDTO handleUnauthorized(UnauthorizedException ex) {
+        return new ErrorsDTO(ex.getMessage(), LocalDateTime.now());
+    }
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
@@ -80,4 +86,6 @@ public class ErrorsHandler {
     public ErrorsDTO handleAuthorizationDenied(AuthorizationDeniedException ex) {
         return new ErrorsDTO("Non hai i permessi per eseguire questa operazione", LocalDateTime.now());
     }
+
+
 }
