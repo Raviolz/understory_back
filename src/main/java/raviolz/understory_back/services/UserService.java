@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import raviolz.understory_back.entities.Role;
 import raviolz.understory_back.entities.User;
@@ -20,10 +21,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RoleService roleService;
+    private final PasswordEncoder bcrypt;
 
-    public UserService(UserRepository userRepository, RoleService roleService) {
+    public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder bcrypt) {
         this.userRepository = userRepository;
         this.roleService = roleService;
+        this.bcrypt = bcrypt;
     }
 
     public User save(UserDTO body) {
@@ -42,7 +45,7 @@ public class UserService {
                 body.name(),
                 body.surname(),
                 body.email(),
-                body.password(), // da codificare in auth branch
+                bcrypt.encode(body.password()),
                 userRole
         );
 
@@ -74,5 +77,10 @@ public class UserService {
         found.setSurname(body.surname());
 
         return userRepository.save(found);
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
     }
 }
