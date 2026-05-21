@@ -107,6 +107,11 @@ public class ErrorsHandler {
     public ErrorsDTO handleMissingServletRequestPart(MissingServletRequestPartException ex) {
         return new ErrorsDTO("Missing required file: " + ex.getRequestPartName(), LocalDateTime.now());
     }
-
+    
+    @ExceptionHandler(InternalServerException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorsDTO handleInternalServer(InternalServerException ex) {
+        return new ErrorsDTO(ex.getMessage(), LocalDateTime.now());
+    }
 
 }

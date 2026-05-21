@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.entities.Role;
 import raviolz.understory_back.entities.User;
+import raviolz.understory_back.exceptions.InternalServerException;
 import raviolz.understory_back.exceptions.NotFoundException;
 import raviolz.understory_back.exceptions.ValidationException;
 import raviolz.understory_back.payloads.UpdateUserProfileDTO;
@@ -24,12 +25,14 @@ public class UserService {
     private final RoleService roleService;
     private final PasswordEncoder bcrypt;
     private final ImageUploadService imageUploadService;
+    private final EmailService emailService;
 
-    public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder bcrypt, ImageUploadService imageUploadService) {
+    public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder bcrypt, ImageUploadService imageUploadService, EmailService emailService) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.bcrypt = bcrypt;
         this.imageUploadService = imageUploadService;
+        this.emailService = emailService;
 
     }
 
@@ -53,7 +56,15 @@ public class UserService {
                 userRole
         );
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        try {
+            emailService.sendRegistrationEmail(savedUser);
+        } catch (InternalServerException ex) {
+            System.out.println("Email di registrazione non inviata: " + ex.getMessage());
+        }
+
+        return savedUser;
+
     }
 
     public Page<User> findAll(int page, int size, String sortBy) {
