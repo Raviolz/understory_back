@@ -3,12 +3,15 @@ package raviolz.understory_back.controllers.backoffice;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.entities.Experience;
 import raviolz.understory_back.entities.QuizGame;
 import raviolz.understory_back.entities.UploadGame;
 import raviolz.understory_back.payloads.ExperienceDTO;
 import raviolz.understory_back.payloads.UpdateExperienceDTO;
+import raviolz.understory_back.payloads.responses.ExperienceResponseDTO;
 import raviolz.understory_back.services.ExperienceService;
 import raviolz.understory_back.services.QuizGameService;
 import raviolz.understory_back.services.UploadGameService;
@@ -53,6 +56,14 @@ public class BoExperienceController {
         return experienceService.update(experienceId, body);
     }
 
+
+    @PatchMapping(value = "/{experienceId}/reveal-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ExperienceResponseDTO updateRevealImage(@PathVariable UUID experienceId,
+                                                   @RequestParam("file") MultipartFile file) {
+        return ExperienceResponseDTO.fromEntity(
+                experienceService.updateRevealImage(experienceId, file)
+        );
+    }
 
     @GetMapping("/{experienceId}/quiz-game")
     public QuizGame findQuizGameByExperience(@PathVariable UUID experienceId) {

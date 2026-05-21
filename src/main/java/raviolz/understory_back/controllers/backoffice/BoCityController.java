@@ -3,10 +3,13 @@ package raviolz.understory_back.controllers.backoffice;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.entities.City;
 import raviolz.understory_back.payloads.CityDTO;
 import raviolz.understory_back.payloads.UpdateCityDTO;
+import raviolz.understory_back.payloads.responses.CityResponseDTO;
 import raviolz.understory_back.services.CityService;
 
 import java.util.UUID;
@@ -43,6 +46,14 @@ public class BoCityController {
     public City update(@PathVariable UUID cityId,
                        @RequestBody @Valid UpdateCityDTO body) {
         return cityService.update(cityId, body);
+    }
+
+    @PatchMapping(value = "/{cityId}/cover-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public CityResponseDTO updateCoverImage(@PathVariable UUID cityId,
+                                            @RequestParam("file") MultipartFile file) {
+        return CityResponseDTO.fromEntity(
+                cityService.updateCoverImage(cityId, file)
+        );
     }
 
     @PatchMapping("/{cityId}/publish")

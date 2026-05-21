@@ -3,10 +3,13 @@ package raviolz.understory_back.controllers.backoffice;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.entities.PointOfInterest;
 import raviolz.understory_back.payloads.PointOfInterestDTO;
 import raviolz.understory_back.payloads.UpdatePointOfInterestDTO;
+import raviolz.understory_back.payloads.responses.PointOfInterestResponseDTO;
 import raviolz.understory_back.services.PointOfInterestService;
 
 import java.util.UUID;
@@ -43,6 +46,14 @@ public class BoPointOfInterestController {
     public PointOfInterest update(@PathVariable UUID pointId,
                                   @RequestBody @Valid UpdatePointOfInterestDTO body) {
         return pointOfInterestService.update(pointId, body);
+    }
+
+    @PatchMapping(value = "/{pointId}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public PointOfInterestResponseDTO updateImage(@PathVariable UUID pointId,
+                                                  @RequestParam("file") MultipartFile file) {
+        return PointOfInterestResponseDTO.fromEntity(
+                pointOfInterestService.updateImage(pointId, file)
+        );
     }
 
     @PatchMapping("/{pointId}/publish")

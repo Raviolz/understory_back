@@ -130,9 +130,11 @@ public class Experience {
     }
 
     public void setRevealImageUrl(String revealImageUrl) {
-        this.revealImageUrl = revealImageUrl != null && !revealImageUrl.isBlank()
-                ? revealImageUrl.trim()
-                : null;
+        if (revealImageUrl == null || revealImageUrl.isBlank()) {
+            throw new ValidationException("Reveal image URL is required");
+        }
+
+        this.revealImageUrl = revealImageUrl.trim();
     }
 
     public void setRevealText(String revealText) {

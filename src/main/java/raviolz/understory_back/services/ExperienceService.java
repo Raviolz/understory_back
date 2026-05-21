@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.entities.Experience;
 import raviolz.understory_back.entities.ExperienceCategory;
 import raviolz.understory_back.entities.PointOfInterest;
@@ -21,12 +22,17 @@ public class ExperienceService {
     private final ExperienceRepository experienceRepository;
     private final PointOfInterestService pointOfInterestService;
     private final ExperienceCategoryService experienceCategoryService;
+    private final ImageUploadService imageUploadService;
 
-    public ExperienceService(ExperienceRepository experienceRepository, PointOfInterestService pointOfInterestService, ExperienceCategoryService experienceCategoryService
+    public ExperienceService(ExperienceRepository experienceRepository,
+                             PointOfInterestService pointOfInterestService,
+                             ExperienceCategoryService experienceCategoryService,
+                             ImageUploadService imageUploadService
     ) {
         this.experienceRepository = experienceRepository;
         this.pointOfInterestService = pointOfInterestService;
         this.experienceCategoryService = experienceCategoryService;
+        this.imageUploadService = imageUploadService;
     }
 
     public Experience save(ExperienceDTO body) {
@@ -80,6 +86,16 @@ public class ExperienceService {
         found.setJournalText(body.journalText());
         found.setXpReward(body.xpReward());
         found.setDifficulty(body.difficulty());
+
+        return experienceRepository.save(found);
+    }
+
+    public Experience updateRevealImage(UUID experienceId, MultipartFile file) {
+        Experience found = findById(experienceId);
+
+        String imageUrl = imageUploadService.uploadImage(file);
+
+        found.setRevealImageUrl(imageUrl);
 
         return experienceRepository.save(found);
     }

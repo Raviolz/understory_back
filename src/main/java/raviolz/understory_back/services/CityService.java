@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.entities.City;
 import raviolz.understory_back.exceptions.NotFoundException;
 import raviolz.understory_back.payloads.CityDTO;
@@ -17,9 +18,11 @@ import java.util.UUID;
 public class CityService {
 
     private final CityRepository cityRepository;
+    private final ImageUploadService imageUploadService;
 
-    public CityService(CityRepository cityRepository) {
+    public CityService(CityRepository cityRepository, ImageUploadService imageUploadService) {
         this.cityRepository = cityRepository;
+        this.imageUploadService = imageUploadService;
     }
 
     public City save(CityDTO body) {
@@ -65,6 +68,16 @@ public class CityService {
     public City findActiveById(UUID id) {
         return cityRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(() -> new NotFoundException("City with id " + id + " not found"));
+    }
+
+    public City updateCoverImage(UUID cityId, MultipartFile file) {
+        City found = findById(cityId);
+
+        String imageUrl = imageUploadService.uploadImage(file);
+
+        found.setCoverImageUrl(imageUrl);
+
+        return cityRepository.save(found);
     }
 
     public City publish(UUID id) {

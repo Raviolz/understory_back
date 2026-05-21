@@ -84,9 +84,11 @@ public class City {
     }
 
     public void setCoverImageUrl(String coverImageUrl) {
-        this.coverImageUrl = coverImageUrl != null && !coverImageUrl.isBlank()
-                ? coverImageUrl.trim()
-                : null;
+        if (coverImageUrl == null || coverImageUrl.isBlank()) {
+            throw new ValidationException("Cover image URL is required");
+        }
+
+        this.coverImageUrl = coverImageUrl.trim();
     }
 
 

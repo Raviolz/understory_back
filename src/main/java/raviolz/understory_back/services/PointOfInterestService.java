@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.entities.City;
 import raviolz.understory_back.entities.PointOfInterest;
 import raviolz.understory_back.exceptions.NotFoundException;
@@ -19,10 +20,12 @@ public class PointOfInterestService {
 
     private final PointOfInterestRepository pointOfInterestRepository;
     private final CityService cityService;
+    private final ImageUploadService imageUploadService;
 
-    public PointOfInterestService(PointOfInterestRepository pointOfInterestRepository, CityService cityService) {
+    public PointOfInterestService(PointOfInterestRepository pointOfInterestRepository, CityService cityService, ImageUploadService imageUploadService) {
         this.pointOfInterestRepository = pointOfInterestRepository;
         this.cityService = cityService;
+        this.imageUploadService = imageUploadService;
     }
 
     public PointOfInterest save(PointOfInterestDTO body) {
@@ -73,6 +76,16 @@ public class PointOfInterestService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return pointOfInterestRepository.findByCityIdAndActiveTrue(cityId, pageable);
+    }
+
+    public PointOfInterest updateImage(UUID pointId, MultipartFile file) {
+        PointOfInterest found = findById(pointId);
+
+        String imageUrl = imageUploadService.uploadImage(file);
+
+        found.setImageUrl(imageUrl);
+
+        return pointOfInterestRepository.save(found);
     }
 
     public PointOfInterest publish(UUID id) {

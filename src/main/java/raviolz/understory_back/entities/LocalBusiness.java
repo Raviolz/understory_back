@@ -116,9 +116,11 @@ public class LocalBusiness {
     }
 
     public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl != null && !imageUrl.isBlank()
-                ? imageUrl.trim()
-                : null;
+        if (imageUrl == null || imageUrl.isBlank()) {
+            throw new ValidationException("Image URL is required");
+        }
+
+        this.imageUrl = imageUrl.trim();
     }
 
     public void setLongitude(double longitude) {

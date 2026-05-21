@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.entities.BusinessCategory;
 import raviolz.understory_back.entities.City;
 import raviolz.understory_back.entities.LocalBusiness;
@@ -23,15 +24,18 @@ public class LocalBusinessService {
     private final LocalBusinessRepository localBusinessRepository;
     private final CityService cityService;
     private final BusinessCategoryService businessCategoryService;
+    private final ImageUploadService imageUploadService;
 
     public LocalBusinessService(
             LocalBusinessRepository localBusinessRepository,
             CityService cityService,
-            BusinessCategoryService businessCategoryService
+            BusinessCategoryService businessCategoryService,
+            ImageUploadService imageUploadService
     ) {
         this.localBusinessRepository = localBusinessRepository;
         this.cityService = cityService;
         this.businessCategoryService = businessCategoryService;
+        this.imageUploadService = imageUploadService;
     }
 
     public LocalBusiness save(LocalBusinessDTO body) {
@@ -122,6 +126,17 @@ public class LocalBusinessService {
         found.setWebsiteUrl(body.websiteUrl());
         found.setLongitude(body.longitude());
         found.setLatitude(body.latitude());
+
+        return localBusinessRepository.save(found);
+    }
+
+
+    public LocalBusiness updateImage(UUID businessId, MultipartFile file) {
+        LocalBusiness found = findById(businessId);
+
+        String imageUrl = imageUploadService.uploadImage(file);
+
+        found.setImageUrl(imageUrl);
 
         return localBusinessRepository.save(found);
     }
