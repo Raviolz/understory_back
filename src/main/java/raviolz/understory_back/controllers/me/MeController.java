@@ -2,8 +2,10 @@ package raviolz.understory_back.controllers.me;
 
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.entities.User;
 import raviolz.understory_back.payloads.UpdateUserProfileDTO;
 import raviolz.understory_back.payloads.UserNoteDTO;
@@ -41,6 +43,14 @@ public class MeController {
                                          @RequestBody @Valid UpdateUserProfileDTO body) {
         return UserResponseDTO.fromEntity(
                 userService.updateProfile(currentUser.getId(), body)
+        );
+    }
+
+    @PatchMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public UserResponseDTO updateAvatar(@AuthenticationPrincipal User currentUser,
+                                        @RequestParam("file") MultipartFile file) {
+        return UserResponseDTO.fromEntity(
+                userService.updateAvatar(currentUser.getId(), file)
         );
     }
 

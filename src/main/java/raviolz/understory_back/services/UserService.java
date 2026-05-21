@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.entities.Role;
 import raviolz.understory_back.entities.User;
 import raviolz.understory_back.exceptions.NotFoundException;
@@ -22,11 +23,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final PasswordEncoder bcrypt;
+    private final ImageUploadService imageUploadService;
 
-    public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder bcrypt) {
+    public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder bcrypt, ImageUploadService imageUploadService) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.bcrypt = bcrypt;
+        this.imageUploadService = imageUploadService;
+
     }
 
     public User save(UserDTO body) {
@@ -75,6 +79,17 @@ public class UserService {
         found.setUsername(body.username());
         found.setName(body.name());
         found.setSurname(body.surname());
+
+        return userRepository.save(found);
+    }
+
+
+    public User updateAvatar(UUID userId, MultipartFile file) {
+        User found = findById(userId);
+
+        String avatarUrl = imageUploadService.uploadImage(file);
+
+        found.setAvatarUrl(avatarUrl);
 
         return userRepository.save(found);
     }

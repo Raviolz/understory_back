@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.entities.Experience;
 import raviolz.understory_back.entities.User;
 import raviolz.understory_back.entities.UserReward;
@@ -14,7 +15,6 @@ import raviolz.understory_back.enums.GameType;
 import raviolz.understory_back.enums.UploadSubmissionStatus;
 import raviolz.understory_back.exceptions.NotFoundException;
 import raviolz.understory_back.exceptions.ValidationException;
-import raviolz.understory_back.payloads.UserUploadSubmissionDTO;
 import raviolz.understory_back.payloads.responses.UploadReviewResponseDTO;
 import raviolz.understory_back.repositories.UserUploadSubmissionRepository;
 
@@ -29,31 +29,36 @@ public class UserUploadSubmissionService {
     private final ExperienceService experienceService;
     private final UserExperienceProgressService userExperienceProgressService;
     private final UserRewardService userRewardService;
+    private final ImageUploadService imageUploadService;
 
     public UserUploadSubmissionService(
             UserUploadSubmissionRepository userUploadSubmissionRepository,
             UserService userService,
             ExperienceService experienceService,
             UserExperienceProgressService userExperienceProgressService,
-            UserRewardService userRewardService
+            UserRewardService userRewardService,
+            ImageUploadService imageUploadService
     ) {
         this.userUploadSubmissionRepository = userUploadSubmissionRepository;
         this.userService = userService;
         this.experienceService = experienceService;
         this.userExperienceProgressService = userExperienceProgressService;
         this.userRewardService = userRewardService;
+        this.imageUploadService = imageUploadService;
     }
 
-    public UserUploadSubmission submit(UUID userId, UserUploadSubmissionDTO body) {
+    public UserUploadSubmission submit(UUID userId, UUID experienceId, MultipartFile file) {
         User user = userService.findById(userId);
-        Experience experience = experienceService.findById(body.experienceId());
+        Experience experience = experienceService.findById(experienceId);
 
         if (experience.getGameType() != GameType.IMAGE_UPLOAD) {
-            throw new ValidationException("Experience " + body.experienceId() + " is not an upload experience");
+            throw new ValidationException("Experience " + experienceId + " is not an upload experience");
         }
 
+        String imageUrl = imageUploadService.uploadImage(file);
+
         Optional<UserUploadSubmission> existingSubmission =
-                userUploadSubmissionRepository.findByUserIdAndExperienceId(userId, body.experienceId());
+                userUploadSubmissionRepository.findByUserIdAndExperienceId(userId, experienceId);
 
         if (existingSubmission.isPresent()) {
             UserUploadSubmission found = existingSubmission.get();
@@ -62,14 +67,14 @@ public class UserUploadSubmissionService {
                 throw new ValidationException("Upload submission has already been approved");
             }
 
-            found.resubmitImage(body.imageUrl());
+            found.resubmitImage(imageUrl);
             return userUploadSubmissionRepository.save(found);
         }
 
         UserUploadSubmission submission = new UserUploadSubmission(
                 user,
                 experience,
-                body.imageUrl()
+                imageUrl
         );
 
         return userUploadSubmissionRepository.save(submission);

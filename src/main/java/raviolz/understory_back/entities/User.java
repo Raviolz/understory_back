@@ -114,6 +114,14 @@ public class User implements UserDetails {
         this.role = role;
     }
 
+    public void setAvatarUrl(String avatarUrl) {
+        if (avatarUrl == null || avatarUrl.isBlank()) {
+            throw new ValidationException("Avatar URL is required");
+        }
+
+        this.avatarUrl = avatarUrl.trim();
+    }
+
 
     // domain methods
 
