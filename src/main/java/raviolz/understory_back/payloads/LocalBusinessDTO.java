@@ -24,7 +24,6 @@ public record LocalBusinessDTO(
         String description,
 
         String websiteUrl,
-        String imageUrl,
 
         @NotNull(message = "Longitude is required")
         @DecimalMin(value = "-180.0", message = "Longitude must be between -180 and 180 degrees")

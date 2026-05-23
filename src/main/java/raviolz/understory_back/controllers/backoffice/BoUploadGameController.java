@@ -3,7 +3,9 @@ package raviolz.understory_back.controllers.backoffice;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.payloads.UpdateUploadGameDTO;
 import raviolz.understory_back.payloads.UploadGameDTO;
 import raviolz.understory_back.payloads.responses.BoUploadGameResponseDTO;
@@ -49,6 +51,14 @@ public class BoUploadGameController {
                                           @RequestBody @Valid UpdateUploadGameDTO body) {
         return BoUploadGameResponseDTO.fromEntity(
                 uploadGameService.update(uploadGameId, body)
+        );
+    }
+
+    @PatchMapping(value = "/{uploadGameId}/reference-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public BoUploadGameResponseDTO updateReferenceImage(@PathVariable UUID uploadGameId,
+                                                        @RequestParam("file") MultipartFile file) {
+        return BoUploadGameResponseDTO.fromEntity(
+                uploadGameService.updateReferenceImage(uploadGameId, file)
         );
     }
 }

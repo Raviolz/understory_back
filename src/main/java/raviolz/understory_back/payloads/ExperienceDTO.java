@@ -31,8 +31,6 @@ public record ExperienceDTO(
         @Size(max = 300, message = "Reveal title cannot exceed 300 characters")
         String revealTitle,
 
-        String revealImageUrl,
-
         @NotBlank(message = "Reveal text is required")
         @Size(max = 3000, message = "Reveal text cannot exceed 3000 characters")
         String revealText,

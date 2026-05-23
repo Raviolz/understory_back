@@ -54,7 +54,7 @@ public class LocalBusiness {
     @Column(nullable = false)
     private boolean active = false;
 
-    public LocalBusiness(City city, BusinessCategory businessCategory, String name, String address, String description, String websiteUrl, String imageUrl, double longitude, double latitude
+    public LocalBusiness(City city, BusinessCategory businessCategory, String name, String address, String description, String websiteUrl, double longitude, double latitude
     ) {
         setCity(city);
         setBusinessCategory(businessCategory);
@@ -62,7 +62,6 @@ public class LocalBusiness {
         setAddress(address);
         setDescription(description);
         setWebsiteUrl(websiteUrl);
-        setImageUrl(imageUrl);
         setLongitude(longitude);
         setLatitude(latitude);
         this.active = false;

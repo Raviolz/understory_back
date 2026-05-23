@@ -31,8 +31,7 @@ public class CityService {
                 body.country(),
                 body.longitude(),
                 body.latitude(),
-                body.description(),
-                body.coverImageUrl()
+                body.description()
         );
 
         return cityRepository.save(city);

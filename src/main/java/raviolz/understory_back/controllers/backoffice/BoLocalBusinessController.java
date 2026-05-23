@@ -3,7 +3,9 @@ package raviolz.understory_back.controllers.backoffice;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.payloads.LocalBusinessDTO;
 import raviolz.understory_back.payloads.UpdateLocalBusinessDTO;
 import raviolz.understory_back.payloads.responses.BoLocalBusinessResponseDTO;
@@ -53,6 +55,14 @@ public class BoLocalBusinessController {
         );
     }
 
+    @PatchMapping(value = "/{businessId}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public BoLocalBusinessResponseDTO updateImage(@PathVariable UUID businessId,
+                                                  @RequestParam("file") MultipartFile file) {
+        return BoLocalBusinessResponseDTO.fromEntity(
+                localBusinessService.updateImage(businessId, file)
+        );
+    }
+
     @PatchMapping("/{businessId}/publish")
     public BoLocalBusinessResponseDTO publish(@PathVariable UUID businessId) {
         return BoLocalBusinessResponseDTO.fromEntity(
@@ -66,4 +76,6 @@ public class BoLocalBusinessController {
                 localBusinessService.unpublish(businessId)
         );
     }
+
+
 }

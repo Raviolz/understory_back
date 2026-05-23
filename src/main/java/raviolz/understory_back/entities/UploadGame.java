@@ -32,14 +32,14 @@ public class UploadGame {
 
     @Column(name = "reference_image_url")
     private String referenceImageUrl;
+    
 
-    public UploadGame(Experience experience, String promptText, String validationHint, String targetDescription, String referenceImageUrl
+    public UploadGame(Experience experience, String promptText, String validationHint, String targetDescription
     ) {
         setExperience(experience);
         setPromptText(promptText);
         setValidationHint(validationHint);
         setTargetDescription(targetDescription);
-        setReferenceImageUrl(referenceImageUrl);
     }
 
     public void setExperience(Experience experience) {

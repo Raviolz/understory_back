@@ -56,7 +56,6 @@ public class LocalBusinessService {
                 body.address(),
                 body.description(),
                 body.websiteUrl(),
-                body.imageUrl(),
                 body.longitude(),
                 body.latitude()
         );

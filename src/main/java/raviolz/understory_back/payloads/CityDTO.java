@@ -25,8 +25,6 @@ public record CityDTO(
 
         @NotBlank(message = "Description is required")
         @Size(max = 1000, message = "Description cannot exceed 1000 characters")
-        String description,
-
-        String coverImageUrl
+        String description
 ) {
 }

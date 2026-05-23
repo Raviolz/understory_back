@@ -16,9 +16,6 @@ public record PointOfInterestDTO(
         @Size(max = 1000, message = "Short description cannot exceed 1000 characters")
         String shortDescription,
 
-
-        String imageUrl,
-
         @NotNull(message = "Longitude is required")
         @DecimalMin(value = "-180.0", message = "Longitude must be between -180 and 180 degrees")
         @DecimalMax(value = "180.0", message = "Longitude must be between -180 and 180 degrees")

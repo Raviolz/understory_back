@@ -47,7 +47,6 @@ public class ExperienceService {
                 body.hookText(),
                 body.introText(),
                 body.revealTitle(),
-                body.revealImageUrl(),
                 body.revealText(),
                 body.journalText(),
                 body.xpReward(),

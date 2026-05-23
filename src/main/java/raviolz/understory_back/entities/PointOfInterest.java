@@ -41,12 +41,12 @@ public class PointOfInterest {
     @Column(nullable = false)
     private boolean active;
 
+
     public PointOfInterest(City city, String name, String shortDescription,
-                           String imageUrl, double longitude, double latitude) {
+                           double longitude, double latitude) {
         setCity(city);
         setName(name);
         setShortDescription(shortDescription);
-        setImageUrl(imageUrl);
         setLongitude(longitude);
         setLatitude(latitude);
         this.active = false;

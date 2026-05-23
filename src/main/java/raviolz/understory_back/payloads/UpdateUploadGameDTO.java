@@ -13,8 +13,6 @@ public record UpdateUploadGameDTO(
 
         @NotBlank(message = "Target description is required")
         @Size(max = 1000, message = "Target description cannot exceed 1000 characters")
-        String targetDescription,
-
-        String referenceImageUrl
+        String targetDescription
 ) {
 }

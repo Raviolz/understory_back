@@ -48,6 +48,15 @@ public class City {
         this.active = false;
     }
 
+    public City(String name, String country, Double longitude, Double latitude, String description) {
+        this.name = name;
+        this.country = country;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.description = description;
+        this.active = false;
+    }
+
     public void setName(String name) {
         if (name == null || name.isBlank()) {
             throw new ValidationException("City name is required");

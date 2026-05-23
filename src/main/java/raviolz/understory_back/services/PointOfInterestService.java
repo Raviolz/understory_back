@@ -35,7 +35,6 @@ public class PointOfInterestService {
                 city,
                 body.name(),
                 body.shortDescription(),
-                body.imageUrl(),
                 body.longitude(),
                 body.latitude()
         );

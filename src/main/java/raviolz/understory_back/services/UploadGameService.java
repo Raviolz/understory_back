@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.entities.Experience;
 import raviolz.understory_back.entities.UploadGame;
 import raviolz.understory_back.enums.GameType;
@@ -21,10 +22,12 @@ public class UploadGameService {
 
     private final UploadGameRepository uploadGameRepository;
     private final ExperienceService experienceService;
+    private final ImageUploadService imageUploadService;
 
-    public UploadGameService(UploadGameRepository uploadGameRepository, ExperienceService experienceService) {
+    public UploadGameService(UploadGameRepository uploadGameRepository, ExperienceService experienceService, ImageUploadService imageUploadService) {
         this.uploadGameRepository = uploadGameRepository;
         this.experienceService = experienceService;
+        this.imageUploadService = imageUploadService;
     }
 
     public UploadGame save(UploadGameDTO body) {
@@ -42,8 +45,7 @@ public class UploadGameService {
                 experience,
                 body.promptText(),
                 body.validationHint(),
-                body.targetDescription(),
-                body.referenceImageUrl()
+                body.targetDescription()
         );
 
         return uploadGameRepository.save(uploadGame);
@@ -70,9 +72,18 @@ public class UploadGameService {
         found.setPromptText(body.promptText());
         found.setValidationHint(body.validationHint());
         found.setTargetDescription(body.targetDescription());
-        found.setReferenceImageUrl(body.referenceImageUrl());
 
         return uploadGameRepository.save(found);
     }
 
+
+    public UploadGame updateReferenceImage(UUID uploadGameId, MultipartFile file) {
+        UploadGame found = findById(uploadGameId);
+
+        String imageUrl = imageUploadService.uploadImage(file);
+
+        found.setReferenceImageUrl(imageUrl);
+
+        return uploadGameRepository.save(found);
+    }
 }

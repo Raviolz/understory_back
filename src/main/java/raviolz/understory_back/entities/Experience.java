@@ -79,6 +79,24 @@ public class Experience {
         setExperienceCategory(experienceCategory);
     }
 
+    public Experience(PointOfInterest pointOfInterest, String title, GameType gameType, String hookText,
+                      String introText, String revealTitle, String revealText, String journalText,
+                      int xpReward, int difficulty, ExperienceCategory experienceCategory) {
+        setPointOfInterest(pointOfInterest);
+        setTitle(title);
+        setGameType(gameType);
+        setHookText(hookText);
+        setIntroText(introText);
+        setRevealTitle(revealTitle);
+        setRevealText(revealText);
+        setJournalText(journalText);
+        setXpReward(xpReward);
+        setDifficulty(difficulty);
+        this.active = false;
+        setExperienceCategory(experienceCategory);
+    }
+
+
     public void setPointOfInterest(PointOfInterest pointOfInterest) {
         if (pointOfInterest == null) {
             throw new ValidationException("Point of interest is required");
