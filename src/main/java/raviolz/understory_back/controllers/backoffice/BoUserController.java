@@ -1,10 +1,8 @@
 package raviolz.understory_back.controllers.backoffice;
 
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import raviolz.understory_back.payloads.responses.UserResponseDTO;
 import raviolz.understory_back.services.UserService;
 
@@ -29,6 +27,15 @@ public class BoUserController {
 //    }
 
     @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    @GetMapping
+    public Page<UserResponseDTO> findAll(@RequestParam(defaultValue = "0") int page,
+                                         @RequestParam(defaultValue = "10") int size,
+                                         @RequestParam(defaultValue = "username") String sortBy) {
+        return userService.findAll(page, size, sortBy)
+                .map(UserResponseDTO::fromEntity);
+    }
+
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @PatchMapping("/{userId}/admin")
     public UserResponseDTO promoteToAdmin(@PathVariable UUID userId) {
         return UserResponseDTO.fromEntity(userService.promoteToAdmin(userId));
@@ -36,8 +43,8 @@ public class BoUserController {
 
 
     @PreAuthorize("hasAuthority('SUPER_ADMIN')")
-    @PatchMapping
-    UserResponseDTO downgradeToUser(@PathVariable UUID userId) {
+    @PatchMapping("/{userId}/user")
+    public UserResponseDTO downgradeToUser(@PathVariable UUID userId) {
         return UserResponseDTO.fromEntity(userService.downgradeToUser(userId));
     }
 }

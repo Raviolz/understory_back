@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import raviolz.understory_back.entities.PointOfInterest;
 import raviolz.understory_back.payloads.PointOfInterestDTO;
 import raviolz.understory_back.payloads.UpdatePointOfInterestDTO;
 import raviolz.understory_back.payloads.responses.PointOfInterestResponseDTO;
@@ -25,27 +24,28 @@ public class BoPointOfInterestController {
     }
 
     @GetMapping
-    public Page<PointOfInterest> findAll(@RequestParam(defaultValue = "0") int page,
-                                         @RequestParam(defaultValue = "10") int size,
-                                         @RequestParam(defaultValue = "name") String sortBy) {
-        return pointOfInterestService.findAll(page, size, sortBy);
+    public Page<PointOfInterestResponseDTO> findAll(@RequestParam(defaultValue = "0") int page,
+                                                    @RequestParam(defaultValue = "10") int size,
+                                                    @RequestParam(defaultValue = "name") String sortBy) {
+        return pointOfInterestService.findAll(page, size, sortBy)
+                .map(PointOfInterestResponseDTO::fromEntity);
     }
 
     @GetMapping("/{pointId}")
-    public PointOfInterest findById(@PathVariable UUID pointId) {
-        return pointOfInterestService.findById(pointId);
+    public PointOfInterestResponseDTO findById(@PathVariable UUID pointId) {
+        return PointOfInterestResponseDTO.fromEntity(pointOfInterestService.findById(pointId));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PointOfInterest save(@RequestBody @Valid PointOfInterestDTO body) {
-        return pointOfInterestService.save(body);
+    public PointOfInterestResponseDTO save(@RequestBody @Valid PointOfInterestDTO body) {
+        return PointOfInterestResponseDTO.fromEntity(pointOfInterestService.save(body));
     }
 
     @PutMapping("/{pointId}")
-    public PointOfInterest update(@PathVariable UUID pointId,
-                                  @RequestBody @Valid UpdatePointOfInterestDTO body) {
-        return pointOfInterestService.update(pointId, body);
+    public PointOfInterestResponseDTO update(@PathVariable UUID pointId,
+                                             @RequestBody @Valid UpdatePointOfInterestDTO body) {
+        return PointOfInterestResponseDTO.fromEntity(pointOfInterestService.update(pointId, body));
     }
 
     @PatchMapping(value = "/{pointId}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -57,12 +57,12 @@ public class BoPointOfInterestController {
     }
 
     @PatchMapping("/{pointId}/publish")
-    public PointOfInterest publish(@PathVariable UUID pointId) {
-        return pointOfInterestService.publish(pointId);
+    public PointOfInterestResponseDTO publish(@PathVariable UUID pointId) {
+        return PointOfInterestResponseDTO.fromEntity(pointOfInterestService.publish(pointId));
     }
 
     @PatchMapping("/{pointId}/unpublish")
-    public PointOfInterest unpublish(@PathVariable UUID pointId) {
-        return pointOfInterestService.unpublish(pointId);
+    public PointOfInterestResponseDTO unpublish(@PathVariable UUID pointId) {
+        return PointOfInterestResponseDTO.fromEntity(pointOfInterestService.unpublish(pointId));
     }
 }

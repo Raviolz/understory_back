@@ -23,15 +23,12 @@ public class BoUploadSubmissionController {
     public Page<BoUploadSubmissionResponseDTO> findAll(@RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "10") int size,
                                                        @RequestParam(defaultValue = "submittedAt") String sortBy) {
-        return userUploadSubmissionService.findAll(page, size, sortBy)
-                .map(BoUploadSubmissionResponseDTO::fromEntity);
+        return userUploadSubmissionService.findAll(page, size, sortBy);
     }
 
     @GetMapping("/{submissionId}")
     public BoUploadSubmissionResponseDTO findById(@PathVariable UUID submissionId) {
-        return BoUploadSubmissionResponseDTO.fromEntity(
-                userUploadSubmissionService.findById(submissionId)
-        );
+        return userUploadSubmissionService.findByIdForBackoffice(submissionId);
     }
 
     @GetMapping("/status/{status}")
@@ -39,8 +36,7 @@ public class BoUploadSubmissionController {
                                                             @RequestParam(defaultValue = "0") int page,
                                                             @RequestParam(defaultValue = "10") int size,
                                                             @RequestParam(defaultValue = "submittedAt") String sortBy) {
-        return userUploadSubmissionService.findByStatus(status, page, size, sortBy)
-                .map(BoUploadSubmissionResponseDTO::fromEntity);
+        return userUploadSubmissionService.findByStatus(status, page, size, sortBy);
     }
 
     @PatchMapping("/{submissionId}/approve")

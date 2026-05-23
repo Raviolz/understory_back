@@ -4,9 +4,9 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import raviolz.understory_back.entities.Reward;
 import raviolz.understory_back.enums.RewardType;
 import raviolz.understory_back.payloads.RewardDTO;
+import raviolz.understory_back.payloads.responses.BoRewardResponseDTO;
 import raviolz.understory_back.services.RewardService;
 
 import java.util.UUID;
@@ -22,60 +22,74 @@ public class BoRewardController {
     }
 
     @GetMapping
-    public Page<Reward> findAll(@RequestParam(defaultValue = "0") int page,
-                                @RequestParam(defaultValue = "10") int size,
-                                @RequestParam(defaultValue = "title") String sortBy) {
-        return rewardService.findAll(page, size, sortBy);
+    public Page<BoRewardResponseDTO> findAll(@RequestParam(defaultValue = "0") int page,
+                                             @RequestParam(defaultValue = "10") int size,
+                                             @RequestParam(defaultValue = "title") String sortBy) {
+        return rewardService.findAll(page, size, sortBy)
+                .map(BoRewardResponseDTO::fromEntity);
     }
 
     @GetMapping("/{rewardId}")
-    public Reward findById(@PathVariable UUID rewardId) {
-        return rewardService.findById(rewardId);
+    public BoRewardResponseDTO findById(@PathVariable UUID rewardId) {
+        return BoRewardResponseDTO.fromEntity(
+                rewardService.findById(rewardId)
+        );
     }
 
     @GetMapping("/business/{businessId}")
-    public Page<Reward> findByBusiness(@PathVariable UUID businessId,
-                                       @RequestParam(defaultValue = "0") int page,
-                                       @RequestParam(defaultValue = "10") int size,
-                                       @RequestParam(defaultValue = "title") String sortBy) {
-        return rewardService.findByBusiness(businessId, page, size, sortBy);
+    public Page<BoRewardResponseDTO> findByBusiness(@PathVariable UUID businessId,
+                                                    @RequestParam(defaultValue = "0") int page,
+                                                    @RequestParam(defaultValue = "10") int size,
+                                                    @RequestParam(defaultValue = "title") String sortBy) {
+        return rewardService.findByBusiness(businessId, page, size, sortBy)
+                .map(BoRewardResponseDTO::fromEntity);
     }
 
     @GetMapping("/city/{cityId}")
-    public Page<Reward> findByCity(@PathVariable UUID cityId,
-                                   @RequestParam(defaultValue = "0") int page,
-                                   @RequestParam(defaultValue = "10") int size,
-                                   @RequestParam(defaultValue = "title") String sortBy) {
-        return rewardService.findByCity(cityId, page, size, sortBy);
+    public Page<BoRewardResponseDTO> findByCity(@PathVariable UUID cityId,
+                                                @RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "10") int size,
+                                                @RequestParam(defaultValue = "title") String sortBy) {
+        return rewardService.findByCity(cityId, page, size, sortBy)
+                .map(BoRewardResponseDTO::fromEntity);
     }
 
     @GetMapping("/type/{rewardType}")
-    public Page<Reward> findByRewardType(@PathVariable RewardType rewardType,
-                                         @RequestParam(defaultValue = "0") int page,
-                                         @RequestParam(defaultValue = "10") int size,
-                                         @RequestParam(defaultValue = "title") String sortBy) {
-        return rewardService.findByRewardType(rewardType, page, size, sortBy);
+    public Page<BoRewardResponseDTO> findByRewardType(@PathVariable RewardType rewardType,
+                                                      @RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "10") int size,
+                                                      @RequestParam(defaultValue = "title") String sortBy) {
+        return rewardService.findByRewardType(rewardType, page, size, sortBy)
+                .map(BoRewardResponseDTO::fromEntity);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Reward save(@RequestBody @Valid RewardDTO body) {
-        return rewardService.save(body);
+    public BoRewardResponseDTO save(@RequestBody @Valid RewardDTO body) {
+        return BoRewardResponseDTO.fromEntity(
+                rewardService.save(body)
+        );
     }
 
     @PutMapping("/{rewardId}")
-    public Reward update(@PathVariable UUID rewardId,
-                         @RequestBody @Valid RewardDTO body) {
-        return rewardService.update(rewardId, body);
+    public BoRewardResponseDTO update(@PathVariable UUID rewardId,
+                                      @RequestBody @Valid RewardDTO body) {
+        return BoRewardResponseDTO.fromEntity(
+                rewardService.update(rewardId, body)
+        );
     }
 
     @PatchMapping("/{rewardId}/publish")
-    public Reward publish(@PathVariable UUID rewardId) {
-        return rewardService.publish(rewardId);
+    public BoRewardResponseDTO publish(@PathVariable UUID rewardId) {
+        return BoRewardResponseDTO.fromEntity(
+                rewardService.publish(rewardId)
+        );
     }
 
     @PatchMapping("/{rewardId}/unpublish")
-    public Reward unpublish(@PathVariable UUID rewardId) {
-        return rewardService.unpublish(rewardId);
+    public BoRewardResponseDTO unpublish(@PathVariable UUID rewardId) {
+        return BoRewardResponseDTO.fromEntity(
+                rewardService.unpublish(rewardId)
+        );
     }
 }

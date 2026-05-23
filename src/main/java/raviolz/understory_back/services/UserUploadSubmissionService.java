@@ -7,15 +7,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import raviolz.understory_back.entities.Experience;
-import raviolz.understory_back.entities.User;
-import raviolz.understory_back.entities.UserReward;
-import raviolz.understory_back.entities.UserUploadSubmission;
+import raviolz.understory_back.entities.*;
 import raviolz.understory_back.enums.GameType;
 import raviolz.understory_back.enums.UploadSubmissionStatus;
 import raviolz.understory_back.exceptions.NotFoundException;
 import raviolz.understory_back.exceptions.ValidationException;
+import raviolz.understory_back.payloads.responses.BoUploadSubmissionResponseDTO;
 import raviolz.understory_back.payloads.responses.UploadReviewResponseDTO;
+import raviolz.understory_back.repositories.UploadGameRepository;
 import raviolz.understory_back.repositories.UserUploadSubmissionRepository;
 
 import java.util.Optional;
@@ -30,6 +29,7 @@ public class UserUploadSubmissionService {
     private final UserExperienceProgressService userExperienceProgressService;
     private final UserRewardService userRewardService;
     private final ImageUploadService imageUploadService;
+    private final UploadGameRepository uploadGameRepository;
 
     public UserUploadSubmissionService(
             UserUploadSubmissionRepository userUploadSubmissionRepository,
@@ -37,7 +37,8 @@ public class UserUploadSubmissionService {
             ExperienceService experienceService,
             UserExperienceProgressService userExperienceProgressService,
             UserRewardService userRewardService,
-            ImageUploadService imageUploadService
+            ImageUploadService imageUploadService,
+            UploadGameRepository uploadGameRepository
     ) {
         this.userUploadSubmissionRepository = userUploadSubmissionRepository;
         this.userService = userService;
@@ -45,6 +46,7 @@ public class UserUploadSubmissionService {
         this.userExperienceProgressService = userExperienceProgressService;
         this.userRewardService = userRewardService;
         this.imageUploadService = imageUploadService;
+        this.uploadGameRepository = uploadGameRepository;
     }
 
     public UserUploadSubmission submit(UUID userId, UUID experienceId, MultipartFile file) {
@@ -80,14 +82,30 @@ public class UserUploadSubmissionService {
         return userUploadSubmissionRepository.save(submission);
     }
 
-    public Page<UserUploadSubmission> findAll(int page, int size, String sortBy) {
+    public Page<BoUploadSubmissionResponseDTO> findAll(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        return userUploadSubmissionRepository.findAll(pageable);
+
+        return userUploadSubmissionRepository.findAll(pageable)
+                .map((submission) -> toBoResponse(submission));
     }
 
     public UserUploadSubmission findById(UUID id) {
         return userUploadSubmissionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User upload submission with id " + id + " not found"));
+    }
+
+    private BoUploadSubmissionResponseDTO toBoResponse(UserUploadSubmission submission) {
+        UploadGame uploadGame = uploadGameRepository.findByExperienceId(
+                submission.getExperience().getId()
+        ).orElseThrow(() -> new NotFoundException("Upload game not found"));
+
+        return BoUploadSubmissionResponseDTO.fromEntity(submission, uploadGame);
+    }
+
+    public BoUploadSubmissionResponseDTO findByIdForBackoffice(UUID submissionId) {
+        UserUploadSubmission submission = findById(submissionId);
+
+        return toBoResponse(submission);
     }
 
     public UserUploadSubmission findByUserAndExperience(UUID userId, UUID experienceId) {
@@ -111,13 +129,15 @@ public class UserUploadSubmissionService {
         return userUploadSubmissionRepository.findByExperienceId(experienceId, pageable);
     }
 
-    public Page<UserUploadSubmission> findByStatus(UploadSubmissionStatus status, int page, int size, String sortBy) {
+    public Page<BoUploadSubmissionResponseDTO> findByStatus(UploadSubmissionStatus status, int page, int size, String sortBy) {
         if (status == null) {
             throw new ValidationException("Upload submission status is required");
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        return userUploadSubmissionRepository.findByStatus(status, pageable);
+
+        return userUploadSubmissionRepository.findByStatus(status, pageable)
+                .map(this::toBoResponse);
     }
 
     @Transactional

@@ -4,6 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record UpdateBusinessCategoryDTO(
+        @NotBlank(message = "Business category code is required")
+        @Size(max = 50, message = "Business category code cannot exceed 50 characters")
+        String code,
+
         @NotBlank(message = "Business category label is required")
         @Size(max = 50, message = "Business category label cannot exceed 50 characters")
         String label,

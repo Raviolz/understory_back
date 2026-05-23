@@ -76,6 +76,7 @@ public class BusinessCategoryService {
             throw new ValidationException("Business category label " + body.label() + " already exists");
         }
 
+        found.setCode(body.code());
         found.setLabel(body.label());
         found.setDescription(body.description());
         found.setIcon(body.icon());

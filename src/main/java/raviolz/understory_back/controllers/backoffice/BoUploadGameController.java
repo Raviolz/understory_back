@@ -4,9 +4,9 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import raviolz.understory_back.entities.UploadGame;
 import raviolz.understory_back.payloads.UpdateUploadGameDTO;
 import raviolz.understory_back.payloads.UploadGameDTO;
+import raviolz.understory_back.payloads.responses.BoUploadGameResponseDTO;
 import raviolz.understory_back.services.UploadGameService;
 
 import java.util.UUID;
@@ -22,26 +22,33 @@ public class BoUploadGameController {
     }
 
     @GetMapping
-    public Page<UploadGame> findAll(@RequestParam(defaultValue = "0") int page,
-                                    @RequestParam(defaultValue = "10") int size,
-                                    @RequestParam(defaultValue = "promptText") String sortBy) {
-        return uploadGameService.findAll(page, size, sortBy);
+    public Page<BoUploadGameResponseDTO> findAll(@RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "10") int size,
+                                                 @RequestParam(defaultValue = "promptText") String sortBy) {
+        return uploadGameService.findAll(page, size, sortBy)
+                .map(BoUploadGameResponseDTO::fromEntity);
     }
 
     @GetMapping("/{uploadGameId}")
-    public UploadGame findById(@PathVariable UUID uploadGameId) {
-        return uploadGameService.findById(uploadGameId);
+    public BoUploadGameResponseDTO findById(@PathVariable UUID uploadGameId) {
+        return BoUploadGameResponseDTO.fromEntity(
+                uploadGameService.findById(uploadGameId)
+        );
     }
-    
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UploadGame save(@RequestBody @Valid UploadGameDTO body) {
-        return uploadGameService.save(body);
+    public BoUploadGameResponseDTO save(@RequestBody @Valid UploadGameDTO body) {
+        return BoUploadGameResponseDTO.fromEntity(
+                uploadGameService.save(body)
+        );
     }
 
     @PutMapping("/{uploadGameId}")
-    public UploadGame update(@PathVariable UUID uploadGameId,
-                             @RequestBody @Valid UpdateUploadGameDTO body) {
-        return uploadGameService.update(uploadGameId, body);
+    public BoUploadGameResponseDTO update(@PathVariable UUID uploadGameId,
+                                          @RequestBody @Valid UpdateUploadGameDTO body) {
+        return BoUploadGameResponseDTO.fromEntity(
+                uploadGameService.update(uploadGameId, body)
+        );
     }
 }

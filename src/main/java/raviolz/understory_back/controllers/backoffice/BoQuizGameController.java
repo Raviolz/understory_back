@@ -4,9 +4,9 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import raviolz.understory_back.entities.QuizGame;
 import raviolz.understory_back.payloads.QuizGameDTO;
 import raviolz.understory_back.payloads.UpdateQuizGameDTO;
+import raviolz.understory_back.payloads.responses.BoQuizGameResponseDTO;
 import raviolz.understory_back.services.QuizGameService;
 
 import java.util.UUID;
@@ -22,26 +22,33 @@ public class BoQuizGameController {
     }
 
     @GetMapping
-    public Page<QuizGame> findAll(@RequestParam(defaultValue = "0") int page,
-                                  @RequestParam(defaultValue = "10") int size,
-                                  @RequestParam(defaultValue = "questionText") String sortBy) {
-        return quizGameService.findAll(page, size, sortBy);
+    public Page<BoQuizGameResponseDTO> findAll(@RequestParam(defaultValue = "0") int page,
+                                               @RequestParam(defaultValue = "10") int size,
+                                               @RequestParam(defaultValue = "questionText") String sortBy) {
+        return quizGameService.findAll(page, size, sortBy)
+                .map(BoQuizGameResponseDTO::fromEntity);
     }
 
     @GetMapping("/{quizGameId}")
-    public QuizGame findById(@PathVariable UUID quizGameId) {
-        return quizGameService.findById(quizGameId);
+    public BoQuizGameResponseDTO findById(@PathVariable UUID quizGameId) {
+        return BoQuizGameResponseDTO.fromEntity(
+                quizGameService.findById(quizGameId)
+        );
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public QuizGame save(@RequestBody @Valid QuizGameDTO body) {
-        return quizGameService.save(body);
+    public BoQuizGameResponseDTO save(@RequestBody @Valid QuizGameDTO body) {
+        return BoQuizGameResponseDTO.fromEntity(
+                quizGameService.save(body)
+        );
     }
 
     @PutMapping("/{quizGameId}")
-    public QuizGame update(@PathVariable UUID quizGameId,
-                           @RequestBody @Valid UpdateQuizGameDTO body) {
-        return quizGameService.update(quizGameId, body);
+    public BoQuizGameResponseDTO update(@PathVariable UUID quizGameId,
+                                        @RequestBody @Valid UpdateQuizGameDTO body) {
+        return BoQuizGameResponseDTO.fromEntity(
+                quizGameService.update(quizGameId, body)
+        );
     }
 }

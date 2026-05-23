@@ -4,6 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record UpdateExperienceCategoryDTO(
+        @NotBlank(message = "Experience category code is required")
+        @Size(max = 50, message = "Experience category code cannot exceed 50 characters")
+        String code,
+
         @NotBlank(message = "Experience category label is required")
         @Size(max = 50, message = "Experience category label cannot exceed 50 characters")
         String label,
