@@ -24,6 +24,8 @@ public record BoExperienceResponseDTO(
 
         String hookText,
         String introText,
+        String contextText,
+        String leadInText,
 
         String revealTitle,
         String revealImageUrl,
@@ -54,6 +56,8 @@ public record BoExperienceResponseDTO(
 
                 experience.getHookText(),
                 experience.getIntroText(),
+                experience.getContextText(),
+                experience.getLeadInText(),
 
                 experience.getRevealTitle(),
                 experience.getRevealImageUrl(),

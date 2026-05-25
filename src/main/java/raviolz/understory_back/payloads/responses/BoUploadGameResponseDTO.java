@@ -11,7 +11,8 @@ public record BoUploadGameResponseDTO(
         String promptText,
         String validationHint,
         String targetDescription,
-        String referenceImageUrl
+        String referenceImageUrl,
+        String explanationText
 ) {
     public static BoUploadGameResponseDTO fromEntity(UploadGame uploadGame) {
         return new BoUploadGameResponseDTO(
@@ -21,7 +22,8 @@ public record BoUploadGameResponseDTO(
                 uploadGame.getPromptText(),
                 uploadGame.getValidationHint(),
                 uploadGame.getTargetDescription(),
-                uploadGame.getReferenceImageUrl()
+                uploadGame.getReferenceImageUrl(),
+                uploadGame.getExplanationText()
         );
     }
 }

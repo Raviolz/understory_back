@@ -8,7 +8,8 @@ import java.util.UUID;
 public record ExperienceResponseDTO(UUID id, UUID pointOfInterestId, UUID experienceCategoryId,
                                     String experienceCategoryCode, String experienceCategoryLabel,
                                     String experienceCategoryIcon, String experienceCategoryColor, String title,
-                                    GameType gameType, String hookText, String introText,
+                                    GameType gameType, String hookText, String introText, String contextText,
+                                    String leadInText,
                                     int xpReward, int difficulty
 ) {
     public static ExperienceResponseDTO fromEntity(Experience experience) {
@@ -24,6 +25,8 @@ public record ExperienceResponseDTO(UUID id, UUID pointOfInterestId, UUID experi
                 experience.getGameType(),
                 experience.getHookText(),
                 experience.getIntroText(),
+                experience.getContextText(),
+                experience.getLeadInText(),
                 experience.getXpReward(),
                 experience.getDifficulty()
         );

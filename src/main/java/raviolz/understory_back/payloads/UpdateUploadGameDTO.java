@@ -12,7 +12,10 @@ public record UpdateUploadGameDTO(
         String validationHint,
 
         @NotBlank(message = "Target description is required")
-        @Size(max = 1000, message = "Target description cannot exceed 1000 characters")
-        String targetDescription
+        @Size(max = 1000, message = "Target description cannot exceed 3000 characters")
+        String targetDescription,
+
+        @Size(max = 3000, message = "Explanation text cannot exceed 3000 characters")
+        String explanationText
 ) {
 }
