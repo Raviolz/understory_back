@@ -65,8 +65,24 @@ public class TokenFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return new AntPathMatcher().match("/auth/**", request.getServletPath())
-                || new AntPathMatcher().match("/error", request.getServletPath())
-                || "OPTIONS".equalsIgnoreCase(request.getMethod());
+        AntPathMatcher pathMatcher = new AntPathMatcher();
+
+        String path = request.getServletPath();
+        String method = request.getMethod();
+
+        if (pathMatcher.match("/auth/**", path)
+                || pathMatcher.match("/error", path)
+                || "OPTIONS".equalsIgnoreCase(method)) {
+            return true;
+        }
+
+        if ("GET".equalsIgnoreCase(method)) {
+            return pathMatcher.match("/cities", path)
+                    || pathMatcher.match("/cities/**", path)
+                    || pathMatcher.match("/points/**", path)
+                    || pathMatcher.match("/experiences/**", path);
+        }
+
+        return false;
     }
 }

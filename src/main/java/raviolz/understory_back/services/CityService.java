@@ -7,11 +7,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.entities.City;
+import raviolz.understory_back.entities.ExperienceCategory;
 import raviolz.understory_back.exceptions.NotFoundException;
 import raviolz.understory_back.payloads.CityDTO;
 import raviolz.understory_back.payloads.UpdateCityDTO;
 import raviolz.understory_back.repositories.CityRepository;
+import raviolz.understory_back.repositories.ExperienceRepository;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -19,10 +23,12 @@ public class CityService {
 
     private final CityRepository cityRepository;
     private final ImageUploadService imageUploadService;
+    private final ExperienceRepository experienceRepository;
 
-    public CityService(CityRepository cityRepository, ImageUploadService imageUploadService) {
+    public CityService(CityRepository cityRepository, ImageUploadService imageUploadService, ExperienceRepository experienceRepository) {
         this.cityRepository = cityRepository;
         this.imageUploadService = imageUploadService;
+        this.experienceRepository = experienceRepository;
     }
 
     public City save(CityDTO body) {
@@ -77,6 +83,16 @@ public class CityService {
         found.setCoverImageUrl(imageUrl);
 
         return cityRepository.save(found);
+    }
+
+    public Optional<ExperienceCategory> findDominantCategoryByCityId(UUID cityId) {
+        List<ExperienceCategory> categories = experienceRepository.findDominantCategoriesByCityId(cityId);
+
+        if (categories.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(categories.get(0));
     }
 
     public City publish(UUID id) {
