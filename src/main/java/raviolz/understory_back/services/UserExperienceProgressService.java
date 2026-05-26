@@ -133,4 +133,12 @@ public class UserExperienceProgressService {
 
         return userExperienceProgressRepository.save(found);
     }
+
+    public long countCompletedByUserAndCity(UUID userId, UUID cityId) {
+        return userExperienceProgressRepository.countByUserIdAndStatusAndExperiencePointOfInterestCityId(
+                userId,
+                ProgressStatus.COMPLETED,
+                cityId
+        );
+    }
 }

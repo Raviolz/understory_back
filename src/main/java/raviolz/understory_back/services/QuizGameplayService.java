@@ -57,14 +57,13 @@ public class QuizGameplayService {
                     null
             );
         }
-// QuizGameplayS controlla se e' giusta, se lo e': UserExperienceProgressS completa l experience e assegna XP solo se non erano già stati assegnati.
         int xpGained = userExperienceProgressService.completeAndAwardXp(
                 userId,
                 body.experienceId()
         );
 
         Optional<UserReward> unlockedReward = xpGained > 0
-                ? userRewardService.unlockRandomRewardForExperienceCity(
+                ? userRewardService.unlockRandomRewardForExperienceCityIfMilestoneReached(
                 userId,
                 body.experienceId()
         )

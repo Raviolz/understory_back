@@ -151,9 +151,10 @@ public class UserUploadSubmissionService {
                 found.getUser().getId(),
                 found.getExperience().getId()
         );
-// Se l'upload completa davvero la experience per la prima volta, provo a sbloccare un reward random della città.
+
+        // Se l'upload completa davvero l experience per la prima volta provo a sbloccare un reward solo se l'utente ha raggiunto l obbiettivo per la città.
         Optional<UserReward> unlockedReward = xpGained > 0
-                ? userRewardService.unlockRandomRewardForExperienceCity(
+                ? userRewardService.unlockRandomRewardForExperienceCityIfMilestoneReached(
                 found.getUser().getId(),
                 found.getExperience().getId()
         )

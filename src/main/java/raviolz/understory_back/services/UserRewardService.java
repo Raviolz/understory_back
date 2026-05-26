@@ -24,18 +24,22 @@ import java.util.concurrent.ThreadLocalRandom;
 @Service
 public class UserRewardService {
 
+    private static final int COMPLETED_EXPERIENCES_PER_REWARD = 3;
+    
     private final UserRewardRepository userRewardRepository;
     private final UserService userService;
     private final RewardService rewardService;
     private final ExperienceService experienceService;
     private final RewardRepository rewardRepository;
+    private final UserExperienceProgressService userExperienceProgressService;
 
     public UserRewardService(
             UserRewardRepository userRewardRepository,
             UserService userService,
             RewardService rewardService,
             ExperienceService experienceService,
-            RewardRepository rewardRepository
+            RewardRepository rewardRepository,
+            UserExperienceProgressService userExperienceProgressService
 
     ) {
         this.userRewardRepository = userRewardRepository;
@@ -43,6 +47,7 @@ public class UserRewardService {
         this.rewardService = rewardService;
         this.experienceService = experienceService;
         this.rewardRepository = rewardRepository;
+        this.userExperienceProgressService = userExperienceProgressService;
     }
 
     public UserReward unlock(UserRewardDTO body) {
@@ -125,16 +130,41 @@ public class UserRewardService {
         return userRewardRepository.save(found);
     }
 
-    public Optional<UserReward> unlockRandomRewardForExperienceCity(UUID userId, UUID experienceId) {
+    public UserReward expireIfRewardExpired(UUID userRewardId) {
+        UserReward found = findById(userRewardId);
+
+        if (found.getStatus() == UserRewardStatus.REDEEMED) {
+            return found;
+        }
+
+        if (found.getReward().isExpired()) {
+            found.markAsExpired();
+            return userRewardRepository.save(found);
+        }
+
+        return found;
+    }
+
+    public Optional<UserReward> unlockRandomRewardForExperienceCityIfMilestoneReached(UUID userId, UUID experienceId) {
         User user = userService.findById(userId);
         Experience experience = experienceService.findById(experienceId);
 
         UUID cityId = experience.getPointOfInterest().getCity().getId();
 
+        long completedCount = userExperienceProgressService.countCompletedByUserAndCity(userId, cityId);
+
+        if (completedCount == 0 || completedCount % COMPLETED_EXPERIENCES_PER_REWARD != 0) {
+            return Optional.empty();
+        }
+
+        return unlockRandomRewardForCity(user, cityId);
+    }
+
+    private Optional<UserReward> unlockRandomRewardForCity(User user, UUID cityId) {
         List<Reward> availableRewards = rewardRepository.findByCityIdAndActiveTrue(cityId)
                 .stream()
                 .filter(Reward::isCurrentlyValid)
-                .filter(reward -> !userRewardRepository.existsByUserIdAndRewardId(userId, reward.getId()))
+                .filter(reward -> !userRewardRepository.existsByUserIdAndRewardId(user.getId(), reward.getId()))
                 .toList();
 
         if (availableRewards.isEmpty()) {

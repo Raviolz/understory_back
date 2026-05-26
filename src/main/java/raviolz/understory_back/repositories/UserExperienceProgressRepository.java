@@ -19,4 +19,6 @@ public interface UserExperienceProgressRepository extends JpaRepository<UserExpe
     Page<UserExperienceProgress> findByUserId(UUID userId, Pageable pageable);
 
     Page<UserExperienceProgress> findByUserIdAndStatus(UUID userId, ProgressStatus status, Pageable pageable);
+
+    long countByUserIdAndStatusAndExperiencePointOfInterestCityId(UUID userId, ProgressStatus status, UUID cityId);
 }
