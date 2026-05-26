@@ -10,6 +10,7 @@ import raviolz.understory_back.entities.Booking;
 import raviolz.understory_back.entities.UserReward;
 import raviolz.understory_back.enums.BookingStatus;
 import raviolz.understory_back.enums.UserRewardStatus;
+import raviolz.understory_back.exceptions.InternalServerException;
 import raviolz.understory_back.exceptions.NotFoundException;
 import raviolz.understory_back.exceptions.ValidationException;
 import raviolz.understory_back.payloads.BookingDTO;
@@ -22,11 +23,14 @@ public class BookingService {
 
     private final BookingRepository bookingRepository;
     private final UserRewardService userRewardService;
+    private final EmailService emailService;
 
     public BookingService(BookingRepository bookingRepository,
-                          UserRewardService userRewardService) {
+                          UserRewardService userRewardService,
+                          EmailService emailService) {
         this.bookingRepository = bookingRepository;
         this.userRewardService = userRewardService;
+        this.emailService = emailService;
     }
 
     public Booking createForUser(UUID userId, BookingDTO body) {
@@ -103,10 +107,17 @@ public class BookingService {
         Booking found = findById(bookingId);
 
         found.confirm();
-
         found.getUserReward().redeem();
 
-        return bookingRepository.save(found);
+        Booking savedBooking = bookingRepository.save(found);
+
+        try {
+            emailService.sendBookingConfirmationEmail(savedBooking);
+        } catch (InternalServerException ex) {
+            System.out.println("Email di conferma prenotazione non inviata: " + ex.getMessage());
+        }
+
+        return savedBooking;
     }
 
     public Booking reject(UUID bookingId) {

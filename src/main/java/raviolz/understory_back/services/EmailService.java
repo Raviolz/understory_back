@@ -5,6 +5,7 @@ import kong.unirest.core.JsonNode;
 import kong.unirest.core.Unirest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import raviolz.understory_back.entities.Booking;
 import raviolz.understory_back.entities.User;
 import raviolz.understory_back.exceptions.InternalServerException;
 
@@ -48,6 +49,43 @@ public class EmailService {
 
         if (response.getStatus() >= 400) {
             throw new InternalServerException("Errore durante l'invio dell'email");
+        }
+    }
+
+
+    public void sendBookingConfirmationEmail(Booking booking) {
+        String message = """
+                Ciao %s,
+                
+                la tua prenotazione è confermata.
+                
+                Reward: %s
+                Luogo: %s
+                Data: %s
+                Persone: %d
+                
+                Mostra questa email o il reward dalla tua area personale quando arrivi.
+                
+                Buona esplorazione,
+                Understory
+                """.formatted(
+                booking.getUserReward().getUser().getName(),
+                booking.getUserReward().getReward().getTitle(),
+                booking.getUserReward().getReward().getBusiness().getName(),
+                booking.getBookingDate(),
+                booking.getPeopleCount()
+        );
+
+        HttpResponse<JsonNode> response = Unirest.post(this.baseUrl + "/v3/" + this.domainName + "/messages")
+                .basicAuth("api", this.apiKey)
+                .queryString("from", this.from)
+                .queryString("to", booking.getUserReward().getUser().getEmail())
+                .queryString("subject", "Prenotazione confermata")
+                .queryString("text", message)
+                .asJson();
+
+        if (response.getStatus() >= 400) {
+            throw new InternalServerException("Errore durante l'invio dell'email di conferma prenotazione");
         }
     }
 
