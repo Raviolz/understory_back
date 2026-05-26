@@ -70,15 +70,27 @@ public class Booking {
     // domain methods
 
     public void confirm() {
-        if (this.status == BookingStatus.CANCELLED) {
-            throw new ValidationException("Cancelled booking cannot be confirmed");
+
+        if (this.status != BookingStatus.PENDING) {
+            throw new ValidationException("Only pending bookings can be confirmed");
+        }
+        this.status = BookingStatus.CONFIRMED;
+    }
+
+    public void reject() {
+        if (this.status == BookingStatus.CONFIRMED) {
+            throw new ValidationException("Confirmed booking cannot be rejected");
         }
 
         if (this.status == BookingStatus.COMPLETED) {
-            throw new ValidationException("Completed booking cannot be confirmed");
+            throw new ValidationException("Completed booking cannot be rejected");
         }
 
-        this.status = BookingStatus.CONFIRMED;
+        if (this.status == BookingStatus.CANCELLED) {
+            throw new ValidationException("Cancelled booking cannot be rejected");
+        }
+
+        this.status = BookingStatus.REJECTED;
     }
 
     public void cancel() {
