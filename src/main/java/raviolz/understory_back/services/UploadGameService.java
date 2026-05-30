@@ -45,7 +45,8 @@ public class UploadGameService {
                 experience,
                 body.promptText(),
                 body.validationHint(),
-                body.targetDescription()
+                body.targetDescription(),
+                body.explanationText()
         );
 
         return uploadGameRepository.save(uploadGame);
@@ -72,6 +73,7 @@ public class UploadGameService {
         found.setPromptText(body.promptText());
         found.setValidationHint(body.validationHint());
         found.setTargetDescription(body.targetDescription());
+        found.setExplanationText(body.explanationText());
 
         return uploadGameRepository.save(found);
     }

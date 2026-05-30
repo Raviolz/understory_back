@@ -46,6 +46,8 @@ public class ExperienceService {
                 body.gameType(),
                 body.hookText(),
                 body.introText(),
+                body.contextText(),
+                body.leadInText(),
                 body.revealTitle(),
                 body.revealText(),
                 body.journalText(),
@@ -80,6 +82,8 @@ public class ExperienceService {
         found.setGameType(body.gameType());
         found.setHookText(body.hookText());
         found.setIntroText(body.introText());
+        found.setContextText(body.contextText());
+        found.setLeadInText(body.leadInText());
         found.setRevealTitle(body.revealTitle());
         found.setRevealText(body.revealText());
         found.setJournalText(body.journalText());

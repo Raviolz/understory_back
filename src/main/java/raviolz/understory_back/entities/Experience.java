@@ -36,6 +36,12 @@ public class Experience {
     @Column(name = "intro_text", nullable = false, length = 3000)
     private String introText;
 
+    @Column(name = "context_text", length = 3000)
+    private String contextText;
+
+    @Column(name = "lead_in_text", length = 3000)
+    private String leadInText;
+
     @Column(name = "reveal_title", nullable = false, length = 300)
     private String revealTitle;
 
@@ -62,13 +68,15 @@ public class Experience {
     private ExperienceCategory experienceCategory;
 
     public Experience(PointOfInterest pointOfInterest, String title, GameType gameType, String hookText,
-                      String introText, String revealTitle, String revealImageUrl, String revealText, String journalText,
+                      String introText, String contextText, String leadInText, String revealTitle, String revealImageUrl, String revealText, String journalText,
                       int xpReward, int difficulty, ExperienceCategory experienceCategory) {
         setPointOfInterest(pointOfInterest);
         setTitle(title);
         setGameType(gameType);
         setHookText(hookText);
         setIntroText(introText);
+        setContextText(contextText);
+        setLeadInText(leadInText);
         setRevealTitle(revealTitle);
         setRevealImageUrl(revealImageUrl);
         setRevealText(revealText);
@@ -80,13 +88,15 @@ public class Experience {
     }
 
     public Experience(PointOfInterest pointOfInterest, String title, GameType gameType, String hookText,
-                      String introText, String revealTitle, String revealText, String journalText,
+                      String introText, String contextText, String leadInText, String revealTitle, String revealText, String journalText,
                       int xpReward, int difficulty, ExperienceCategory experienceCategory) {
         setPointOfInterest(pointOfInterest);
         setTitle(title);
         setGameType(gameType);
         setHookText(hookText);
         setIntroText(introText);
+        setContextText(contextText);
+        setLeadInText(leadInText);
         setRevealTitle(revealTitle);
         setRevealText(revealText);
         setJournalText(journalText);
@@ -137,6 +147,18 @@ public class Experience {
             throw new ValidationException("Intro text is required");
         }
         this.introText = introText;
+    }
+
+    public void setContextText(String contextText) {
+        this.contextText = contextText != null && !contextText.isBlank()
+                ? contextText.trim()
+                : null;
+    }
+
+    public void setLeadInText(String leadInText) {
+        this.leadInText = leadInText != null && !leadInText.isBlank()
+                ? leadInText.trim()
+                : null;
     }
 
 
@@ -203,6 +225,8 @@ public class Experience {
                 ", gameType=" + gameType +
                 ", hookText='" + hookText + '\'' +
                 ", introText='" + introText + '\'' +
+                ", contextText='" + contextText + '\'' +
+                ", leadInText='" + leadInText + '\'' +
                 ", revealTitle='" + revealTitle + '\'' +
                 ", revealImageUrl='" + revealImageUrl + '\'' +
                 ", revealText='" + revealText + '\'' +

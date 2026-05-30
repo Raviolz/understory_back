@@ -27,6 +27,12 @@ public record UpdateExperienceDTO(
         @Size(max = 3000, message = "Intro text cannot exceed 3000 characters")
         String introText,
 
+        @Size(max = 3000, message = "Context text cannot exceed 3000 characters")
+        String contextText,
+
+        @Size(max = 3000, message = "Lead-in text cannot exceed 3000 characters")
+        String leadInText,
+
         @NotBlank(message = "Reveal title is required")
         @Size(max = 300, message = "Reveal title cannot exceed 300 characters")
         String revealTitle,

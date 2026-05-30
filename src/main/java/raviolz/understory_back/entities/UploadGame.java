@@ -32,14 +32,17 @@ public class UploadGame {
 
     @Column(name = "reference_image_url")
     private String referenceImageUrl;
-    
 
-    public UploadGame(Experience experience, String promptText, String validationHint, String targetDescription
-    ) {
+    @Column(name = "explanation_text", length = 3000)
+    private String explanationText;
+
+
+    public UploadGame(Experience experience, String promptText, String validationHint, String targetDescription, String explanationText) {
         setExperience(experience);
         setPromptText(promptText);
         setValidationHint(validationHint);
         setTargetDescription(targetDescription);
+        setExplanationText(explanationText);
     }
 
     public void setExperience(Experience experience) {
@@ -76,6 +79,12 @@ public class UploadGame {
                 : null;
     }
 
+    public void setExplanationText(String explanationText) {
+        this.explanationText = explanationText != null && !explanationText.isBlank()
+                ? explanationText.trim()
+                : null;
+    }
+
     @Override
     public String toString() {
         return "UploadGame{" +
@@ -85,6 +94,7 @@ public class UploadGame {
                 ", validationHint='" + validationHint + '\'' +
                 ", targetDescription='" + targetDescription + '\'' +
                 ", referenceImageUrl='" + referenceImageUrl + '\'' +
+                ", explanationText='" + explanationText + '\'' +
                 '}';
     }
 }
