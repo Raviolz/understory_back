@@ -35,4 +35,6 @@ public interface ExperienceRepository extends JpaRepository<Experience, UUID> {
 
     Optional<Experience> findFirstByPointOfInterestIdAndActiveTrueOrderByTitleAsc(UUID pointOfInterestId);
 
+    long countByPointOfInterestCityIdAndActiveTrue(UUID cityId);
+
 }

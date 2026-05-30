@@ -46,12 +46,15 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/auth/**", "/error").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/cities", "/cities/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/cities/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/points/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/experiences/**").permitAll()
+
+
+                .requestMatchers(HttpMethod.GET, "/cities").permitAll()
+
+
                 .requestMatchers("/backoffice/**").hasAnyAuthority("ADMIN", "SUPER_ADMIN")
                 .requestMatchers("/gameplay/**").hasAnyAuthority("USER", "ADMIN", "SUPER_ADMIN")
+                .requestMatchers("/me/**").hasAnyAuthority("USER", "ADMIN", "SUPER_ADMIN")
+
                 .anyRequest().authenticated()
         );
 

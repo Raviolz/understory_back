@@ -14,9 +14,13 @@ import raviolz.understory_back.exceptions.NotFoundException;
 import raviolz.understory_back.exceptions.ValidationException;
 import raviolz.understory_back.payloads.UserExperienceProgressDTO;
 import raviolz.understory_back.payloads.UserNoteDTO;
+import raviolz.understory_back.payloads.responses.CityKnowledgeResponseDTO;
+import raviolz.understory_back.repositories.CityRepository;
+import raviolz.understory_back.repositories.ExperienceRepository;
 import raviolz.understory_back.repositories.UserExperienceProgressRepository;
 import raviolz.understory_back.repositories.UserRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -26,14 +30,23 @@ public class UserExperienceProgressService {
     private final UserService userService;
     private final ExperienceService experienceService;
     private final UserRepository userRepository;
+    private final CityRepository cityRepository;
+    private final ExperienceRepository experienceRepository;
 
-    public UserExperienceProgressService(UserExperienceProgressRepository userExperienceProgressRepository, UserService userService, ExperienceService experienceService, UserRepository userRepository
+    public UserExperienceProgressService(UserExperienceProgressRepository userExperienceProgressRepository,
+                                         UserService userService,
+                                         ExperienceService experienceService,
+                                         UserRepository userRepository,
+                                         CityRepository cityRepository,
+                                         ExperienceRepository experienceRepository
 
     ) {
         this.userExperienceProgressRepository = userExperienceProgressRepository;
         this.userService = userService;
         this.experienceService = experienceService;
         this.userRepository = userRepository;
+        this.cityRepository = cityRepository;
+        this.experienceRepository = experienceRepository;
     }
 
     public UserExperienceProgress startOrGet(UserExperienceProgressDTO body) {
@@ -140,5 +153,35 @@ public class UserExperienceProgressService {
                 ProgressStatus.COMPLETED,
                 cityId
         );
+    }
+
+    public List<CityKnowledgeResponseDTO> getCityKnowledgeForUser(UUID userId) {
+        userService.findById(userId);
+
+        return cityRepository.findByActiveTrue(PageRequest.of(0, 100, Sort.by("name")))
+                .stream()
+                .map(city -> {
+                    long totalExperiences = experienceRepository.countByPointOfInterestCityIdAndActiveTrue(city.getId());
+
+                    long completedExperiences = userExperienceProgressRepository.countByUserIdAndStatusAndExperiencePointOfInterestCityId(
+                            userId,
+                            ProgressStatus.COMPLETED,
+                            city.getId()
+                    );
+
+                    int percentage = totalExperiences == 0
+                            ? 0
+                            : (int) Math.round((completedExperiences * 100.0) / totalExperiences);
+
+                    return new CityKnowledgeResponseDTO(
+                            city.getId(),
+                            city.getName(),
+                            completedExperiences,
+                            totalExperiences,
+                            percentage
+                    );
+                })
+                .filter(cityKnowledge -> cityKnowledge.completedExperiences() > 0)
+                .toList();
     }
 }

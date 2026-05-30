@@ -77,10 +77,7 @@ public class TokenFilter extends OncePerRequestFilter {
         }
 
         if ("GET".equalsIgnoreCase(method)) {
-            return pathMatcher.match("/cities", path)
-                    || pathMatcher.match("/cities/**", path)
-                    || pathMatcher.match("/points/**", path)
-                    || pathMatcher.match("/experiences/**", path);
+            return pathMatcher.match("/cities", path);
         }
 
         return false;

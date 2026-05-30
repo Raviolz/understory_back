@@ -4,6 +4,7 @@ import raviolz.understory_back.entities.UserReward;
 import raviolz.understory_back.enums.RewardType;
 import raviolz.understory_back.enums.UserRewardStatus;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -22,7 +23,9 @@ public record UserRewardResponseDTO(
         String businessName,
         UserRewardStatus status,
         LocalDateTime unlockedAt,
-        LocalDateTime redeemedAt
+        LocalDateTime redeemedAt,
+        LocalDate validFrom,
+        LocalDate validUntil
 ) {
     public static UserRewardResponseDTO fromEntity(UserReward userReward) {
         return new UserRewardResponseDTO(
@@ -40,7 +43,9 @@ public record UserRewardResponseDTO(
                 userReward.getReward().getBusiness().getName(),
                 userReward.getStatus(),
                 userReward.getUnlockedAt(),
-                userReward.getRedeemedAt()
+                userReward.getRedeemedAt(),
+                userReward.getReward().getValidFrom(),
+                userReward.getReward().getValidUntil()
         );
     }
 }
