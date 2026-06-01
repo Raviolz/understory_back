@@ -9,10 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.entities.User;
 import raviolz.understory_back.payloads.UpdateUserProfileDTO;
 import raviolz.understory_back.payloads.UserNoteDTO;
-import raviolz.understory_back.payloads.responses.UserJournalEntryResponseDTO;
-import raviolz.understory_back.payloads.responses.UserProgressResponseDTO;
-import raviolz.understory_back.payloads.responses.UserResponseDTO;
-import raviolz.understory_back.payloads.responses.UserRewardResponseDTO;
+import raviolz.understory_back.payloads.responses.*;
 import raviolz.understory_back.services.UserExperienceProgressService;
 import raviolz.understory_back.services.UserRewardService;
 import raviolz.understory_back.services.UserService;
@@ -91,6 +88,15 @@ public class MeController {
                         progressId,
                         body
                 )
+        );
+    }
+
+    @GetMapping("/experiences/{experienceId}/completion")
+    public ExperienceCompletionResponseDTO getMyExperienceCompletion(@AuthenticationPrincipal User currentUser,
+                                                                     @PathVariable UUID experienceId) {
+        return userExperienceProgressService.getExperienceCompletionForUser(
+                currentUser.getId(),
+                experienceId
         );
     }
 }

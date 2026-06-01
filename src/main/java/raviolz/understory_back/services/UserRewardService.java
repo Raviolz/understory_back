@@ -12,7 +12,6 @@ import raviolz.understory_back.entities.UserReward;
 import raviolz.understory_back.enums.UserRewardStatus;
 import raviolz.understory_back.exceptions.NotFoundException;
 import raviolz.understory_back.exceptions.ValidationException;
-import raviolz.understory_back.payloads.UserRewardDTO;
 import raviolz.understory_back.repositories.RewardRepository;
 import raviolz.understory_back.repositories.UserRewardRepository;
 
@@ -25,7 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class UserRewardService {
 
     private static final int COMPLETED_EXPERIENCES_PER_REWARD = 3;
-    
+
     private final UserRewardRepository userRewardRepository;
     private final UserService userService;
     private final RewardService rewardService;
@@ -48,23 +47,6 @@ public class UserRewardService {
         this.experienceService = experienceService;
         this.rewardRepository = rewardRepository;
         this.userExperienceProgressService = userExperienceProgressService;
-    }
-
-    public UserReward unlock(UserRewardDTO body) {
-        User user = userService.findById(body.userId());
-        Reward reward = rewardService.findById(body.rewardId());
-
-        if (!reward.isCurrentlyValid()) {
-            throw new ValidationException("Reward " + body.rewardId() + " is not currently valid");
-        }
-
-        if (userRewardRepository.existsByUserIdAndRewardId(body.userId(), body.rewardId())) { // un utente puo' sbloccare lo stesso reward solo una volta
-            throw new ValidationException("User " + body.userId() + " has already unlocked reward " + body.rewardId());
-        }
-
-        UserReward userReward = new UserReward(user, reward);
-
-        return userRewardRepository.save(userReward);
     }
 
     public Page<UserReward> findAll(int page, int size, String sortBy) {

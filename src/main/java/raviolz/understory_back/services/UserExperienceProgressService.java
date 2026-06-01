@@ -12,13 +12,10 @@ import raviolz.understory_back.entities.UserExperienceProgress;
 import raviolz.understory_back.enums.ProgressStatus;
 import raviolz.understory_back.exceptions.NotFoundException;
 import raviolz.understory_back.exceptions.ValidationException;
-import raviolz.understory_back.payloads.UserExperienceProgressDTO;
 import raviolz.understory_back.payloads.UserNoteDTO;
 import raviolz.understory_back.payloads.responses.CityKnowledgeResponseDTO;
-import raviolz.understory_back.repositories.CityRepository;
-import raviolz.understory_back.repositories.ExperienceRepository;
-import raviolz.understory_back.repositories.UserExperienceProgressRepository;
-import raviolz.understory_back.repositories.UserRepository;
+import raviolz.understory_back.payloads.responses.ExperienceCompletionResponseDTO;
+import raviolz.understory_back.repositories.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,13 +29,17 @@ public class UserExperienceProgressService {
     private final UserRepository userRepository;
     private final CityRepository cityRepository;
     private final ExperienceRepository experienceRepository;
+    private final QuizGameRepository quizGameRepository;
+    private final UploadGameRepository uploadGameRepository;
 
     public UserExperienceProgressService(UserExperienceProgressRepository userExperienceProgressRepository,
                                          UserService userService,
                                          ExperienceService experienceService,
                                          UserRepository userRepository,
                                          CityRepository cityRepository,
-                                         ExperienceRepository experienceRepository
+                                         ExperienceRepository experienceRepository,
+                                         QuizGameRepository quizGameRepository,
+                                         UploadGameRepository uploadGameRepository
 
     ) {
         this.userExperienceProgressRepository = userExperienceProgressRepository;
@@ -47,17 +48,8 @@ public class UserExperienceProgressService {
         this.userRepository = userRepository;
         this.cityRepository = cityRepository;
         this.experienceRepository = experienceRepository;
-    }
-
-    public UserExperienceProgress startOrGet(UserExperienceProgressDTO body) {
-        User user = userService.findById(body.userId());
-        Experience experience = experienceService.findById(body.experienceId());
-
-        return userExperienceProgressRepository
-                .findByUserIdAndExperienceId(body.userId(), body.experienceId())
-                .orElseGet(() -> userExperienceProgressRepository.save(
-                        new UserExperienceProgress(user, experience)
-                ));
+        this.quizGameRepository = quizGameRepository;
+        this.uploadGameRepository = uploadGameRepository;
     }
 
     public Page<UserExperienceProgress> findAll(int page, int size, String sortBy) {
@@ -175,5 +167,40 @@ public class UserExperienceProgressService {
                 })
                 .filter(cityKnowledge -> cityKnowledge.completedExperiences() > 0)
                 .toList();
+    }
+
+
+    public ExperienceCompletionResponseDTO getExperienceCompletionForUser(UUID userId, UUID experienceId) {
+        userService.findById(userId);
+
+        UserExperienceProgress progress = userExperienceProgressRepository
+                .findByUserIdAndExperienceId(userId, experienceId)
+                .orElse(null);
+
+        if (progress == null || !progress.isCompleted()) {
+            return new ExperienceCompletionResponseDTO(
+                    experienceId,
+                    false,
+                    null,
+                    null
+            );
+        }
+
+        String explanationText = switch (progress.getExperience().getGameType()) {
+            case QUIZ -> quizGameRepository.findByExperienceId(experienceId)
+                    .map(quizGame -> quizGame.getExplanationText())
+                    .orElse(null);
+
+            case IMAGE_UPLOAD -> uploadGameRepository.findByExperienceId(experienceId)
+                    .map(uploadGame -> uploadGame.getExplanationText())
+                    .orElse(null);
+        };
+
+        return new ExperienceCompletionResponseDTO(
+                experienceId,
+                true,
+                progress.getCompletedAt(),
+                explanationText
+        );
     }
 }

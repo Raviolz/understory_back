@@ -1,6 +1,7 @@
 package raviolz.understory_back.controllers.backoffice;
 
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import raviolz.understory_back.enums.UserRewardStatus;
 import raviolz.understory_back.payloads.responses.UserRewardResponseDTO;
@@ -68,11 +69,13 @@ public class BoUserRewardController {
                 .map(UserRewardResponseDTO::fromEntity);
     }
 
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @PatchMapping("/{userRewardId}/redeem")
     public UserRewardResponseDTO redeem(@PathVariable UUID userRewardId) {
         return UserRewardResponseDTO.fromEntity(userRewardService.redeem(userRewardId));
     }
 
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @PatchMapping("/{userRewardId}/expire")
     public UserRewardResponseDTO markAsExpired(@PathVariable UUID userRewardId) {
         return UserRewardResponseDTO.fromEntity(userRewardService.markAsExpired(userRewardId));
