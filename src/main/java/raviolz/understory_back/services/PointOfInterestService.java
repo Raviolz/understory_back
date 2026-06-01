@@ -9,8 +9,10 @@ import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.entities.City;
 import raviolz.understory_back.entities.PointOfInterest;
 import raviolz.understory_back.exceptions.NotFoundException;
+import raviolz.understory_back.exceptions.ValidationException;
 import raviolz.understory_back.payloads.PointOfInterestDTO;
 import raviolz.understory_back.payloads.UpdatePointOfInterestDTO;
+import raviolz.understory_back.repositories.ExperienceRepository;
 import raviolz.understory_back.repositories.PointOfInterestRepository;
 
 import java.util.UUID;
@@ -21,11 +23,16 @@ public class PointOfInterestService {
     private final PointOfInterestRepository pointOfInterestRepository;
     private final CityService cityService;
     private final ImageUploadService imageUploadService;
+    private final ExperienceRepository experienceRepository;
 
-    public PointOfInterestService(PointOfInterestRepository pointOfInterestRepository, CityService cityService, ImageUploadService imageUploadService) {
+    public PointOfInterestService(PointOfInterestRepository pointOfInterestRepository,
+                                  CityService cityService,
+                                  ImageUploadService imageUploadService,
+                                  ExperienceRepository experienceRepository) {
         this.pointOfInterestRepository = pointOfInterestRepository;
         this.cityService = cityService;
         this.imageUploadService = imageUploadService;
+        this.experienceRepository = experienceRepository;
     }
 
     public PointOfInterest save(PointOfInterestDTO body) {
@@ -97,5 +104,15 @@ public class PointOfInterestService {
         PointOfInterest found = findById(id);
         found.unpublish();
         return pointOfInterestRepository.save(found);
+    }
+
+    public void delete(UUID id) {
+        PointOfInterest found = findById(id);
+
+        if (experienceRepository.existsByPointOfInterestId(id)) {
+            throw new ValidationException("Cannot delete point of interest with linked experiences. Unpublish it instead.");
+        }
+
+        pointOfInterestRepository.delete(found);
     }
 }

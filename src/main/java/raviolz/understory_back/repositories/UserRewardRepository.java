@@ -24,4 +24,6 @@ public interface UserRewardRepository extends JpaRepository<UserReward, UUID> {
     Page<UserReward> findByStatus(UserRewardStatus status, Pageable pageable);
 
     Page<UserReward> findByUserIdAndStatus(UUID userId, UserRewardStatus status, Pageable pageable);
+
+    boolean existsByRewardId(UUID rewardId);
 }

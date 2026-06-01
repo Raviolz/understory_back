@@ -17,4 +17,6 @@ public interface PointOfInterestRepository extends JpaRepository<PointOfInterest
     Optional<PointOfInterest> findByIdAndActiveTrue(UUID id);
 
     Page<PointOfInterest> findByCityIdAndActiveTrue(UUID cityId, Pageable pageable);
+
+    boolean existsByCityId(UUID cityId);
 }

@@ -6,11 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import raviolz.understory_back.entities.QuizGame;
-import raviolz.understory_back.entities.UploadGame;
 import raviolz.understory_back.payloads.ExperienceDTO;
 import raviolz.understory_back.payloads.UpdateExperienceDTO;
 import raviolz.understory_back.payloads.responses.BoExperienceResponseDTO;
+import raviolz.understory_back.payloads.responses.BoQuizGameResponseDTO;
+import raviolz.understory_back.payloads.responses.BoUploadGameResponseDTO;
 import raviolz.understory_back.services.ExperienceService;
 import raviolz.understory_back.services.QuizGameService;
 import raviolz.understory_back.services.UploadGameService;
@@ -73,13 +73,17 @@ public class BoExperienceController {
     }
 
     @GetMapping("/{experienceId}/quiz-game")
-    public QuizGame findQuizGameByExperience(@PathVariable UUID experienceId) {
-        return quizGameService.findByExperienceId(experienceId);
+    public BoQuizGameResponseDTO findQuizGameByExperience(@PathVariable UUID experienceId) {
+        return BoQuizGameResponseDTO.fromEntity(
+                quizGameService.findByExperienceId(experienceId)
+        );
     }
 
     @GetMapping("/{experienceId}/upload-game")
-    public UploadGame findUploadGameByExperience(@PathVariable UUID experienceId) {
-        return uploadGameService.findByExperienceId(experienceId);
+    public BoUploadGameResponseDTO findUploadGameByExperience(@PathVariable UUID experienceId) {
+        return BoUploadGameResponseDTO.fromEntity(
+                uploadGameService.findByExperienceId(experienceId)
+        );
     }
 
     @PatchMapping("/{experienceId}/publish")
@@ -95,4 +99,11 @@ public class BoExperienceController {
                 experienceService.unpublish(experienceId)
         );
     }
+
+    @DeleteMapping("/{experienceId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID experienceId) {
+        experienceService.delete(experienceId);
+    }
 }
+

@@ -22,4 +22,8 @@ public interface RewardRepository extends JpaRepository<Reward, UUID> {
     Page<Reward> findByActiveTrue(Pageable pageable);
 
     List<Reward> findByCityIdAndActiveTrue(UUID cityId);
+
+    boolean existsByCityId(UUID cityId);
+
+    boolean existsByBusinessId(UUID businessId);
 }

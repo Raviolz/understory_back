@@ -32,8 +32,8 @@ public class BusinessCategory {
     public BusinessCategory(String code, String label, String description, String icon) {
         setCode(code);
         setLabel(label);
-        this.description = description;
-        this.icon = icon;
+        setDescription(description);
+        setIcon(icon);
     }
 
     public void setCode(String code) {
@@ -47,7 +47,7 @@ public class BusinessCategory {
         if (label == null || label.isBlank()) {
             throw new ValidationException("Business category label is required");
         }
-        this.label = label;
+        this.label = label.trim();
     }
 
     public void setDescription(String description) {
@@ -55,7 +55,9 @@ public class BusinessCategory {
     }
 
     public void setIcon(String icon) {
-        this.icon = icon;
+        this.icon = icon != null && !icon.isBlank()
+                ? icon.trim()
+                : null;
     }
 
     @Override

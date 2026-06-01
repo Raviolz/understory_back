@@ -61,4 +61,10 @@ public class BoUploadGameController {
                 uploadGameService.updateReferenceImage(uploadGameId, file)
         );
     }
+
+    @DeleteMapping("/{uploadGameId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID uploadGameId) {
+        uploadGameService.delete(uploadGameId);
+    }
 }

@@ -19,7 +19,8 @@ public record BookingDTO(
         @Size(max = 1000, message = "Notes cannot exceed 1000 characters")
         String notes,
 
+        @NotNull(message = "People count is required")
         @Min(value = 1, message = "People count must be greater than zero")
-        int peopleCount
+        Integer peopleCount
 ) {
 }

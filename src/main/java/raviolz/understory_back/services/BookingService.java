@@ -45,7 +45,7 @@ public class BookingService {
         }
 
         if (!userReward.getReward().isCurrentlyValid()) {
-            userReward = userRewardService.expireIfRewardExpired(userReward.getId());
+            userRewardService.expireIfRewardExpired(userReward.getId());
             throw new ValidationException("Reward is not currently valid");
         }
 

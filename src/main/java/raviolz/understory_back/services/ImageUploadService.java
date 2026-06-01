@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import raviolz.understory_back.exceptions.InternalServerException;
 import raviolz.understory_back.exceptions.ValidationException;
 
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class ImageUploadService {
         }
 
         try {
-            Map result = cloudinaryUploader.uploader().upload(
+            Map<?, ?> result = cloudinaryUploader.uploader().upload(
                     file.getBytes(),
                     ObjectUtils.emptyMap()
             );
@@ -36,7 +37,7 @@ public class ImageUploadService {
             return (String) result.get("secure_url");
 
         } catch (IOException ex) {
-            throw new ValidationException("Image upload failed");
+            throw new InternalServerException("Image upload failed");
         }
     }
 }

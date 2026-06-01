@@ -52,9 +52,9 @@ public class ExperienceCategory {
 
     public void setDescription(String description) {
         if (description == null || description.isBlank()) {
-            throw new ValidationException("Description  is required");
+            throw new ValidationException("Description is required");
         }
-        this.description = description;
+        this.description = description.trim();
     }
 
     public void setIcon(String icon) {

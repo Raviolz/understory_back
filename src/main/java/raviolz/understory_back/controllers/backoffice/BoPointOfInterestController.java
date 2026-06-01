@@ -65,4 +65,10 @@ public class BoPointOfInterestController {
     public PointOfInterestResponseDTO unpublish(@PathVariable UUID pointId) {
         return PointOfInterestResponseDTO.fromEntity(pointOfInterestService.unpublish(pointId));
     }
+
+    @DeleteMapping("/{pointId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID pointId) {
+        pointOfInterestService.delete(pointId);
+    }
 }

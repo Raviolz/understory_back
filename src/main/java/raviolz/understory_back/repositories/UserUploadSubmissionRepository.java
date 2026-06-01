@@ -21,4 +21,5 @@ public interface UserUploadSubmissionRepository extends JpaRepository<UserUpload
 
     Page<UserUploadSubmission> findByStatus(UploadSubmissionStatus status, Pageable pageable);
 
+    boolean existsByExperienceId(UUID experienceId);
 }

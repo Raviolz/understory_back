@@ -9,6 +9,7 @@ public record PointOfInterestDTO(
         UUID cityId,
 
         @NotBlank(message = "Point of interest name is required")
+        @Size(max = 255, message = "Point of interest name cannot exceed 255 characters")
         @Size(max = 255)
         String name,
 

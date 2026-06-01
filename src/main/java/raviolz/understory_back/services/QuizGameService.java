@@ -13,6 +13,8 @@ import raviolz.understory_back.exceptions.ValidationException;
 import raviolz.understory_back.payloads.QuizGameDTO;
 import raviolz.understory_back.payloads.UpdateQuizGameDTO;
 import raviolz.understory_back.repositories.QuizGameRepository;
+import raviolz.understory_back.repositories.UserExperienceProgressRepository;
+import raviolz.understory_back.repositories.UserUploadSubmissionRepository;
 
 import java.util.UUID;
 
@@ -21,10 +23,17 @@ public class QuizGameService {
 
     private final QuizGameRepository quizGameRepository;
     private final ExperienceService experienceService;
+    private final UserExperienceProgressRepository userExperienceProgressRepository;
+    private final UserUploadSubmissionRepository userUploadSubmissionRepository;
 
-    public QuizGameService(QuizGameRepository quizGameRepository, ExperienceService experienceService) {
+    public QuizGameService(QuizGameRepository quizGameRepository,
+                           ExperienceService experienceService,
+                           UserExperienceProgressRepository userExperienceProgressRepository,
+                           UserUploadSubmissionRepository userUploadSubmissionRepository) {
         this.quizGameRepository = quizGameRepository;
         this.experienceService = experienceService;
+        this.userExperienceProgressRepository = userExperienceProgressRepository;
+        this.userUploadSubmissionRepository = userUploadSubmissionRepository;
     }
 
     public QuizGame save(QuizGameDTO body) {
@@ -79,5 +88,21 @@ public class QuizGameService {
         found.setExplanationText(body.explanationText());
 
         return quizGameRepository.save(found);
+    }
+
+    public void delete(UUID id) {
+        QuizGame found = findById(id);
+
+        UUID experienceId = found.getExperience().getId();
+
+        if (userExperienceProgressRepository.existsByExperienceId(experienceId)) {
+            throw new ValidationException("Cannot delete quiz game linked to an experience with user progress. Unpublish the experience instead.");
+        }
+
+        if (userUploadSubmissionRepository.existsByExperienceId(experienceId)) {
+            throw new ValidationException("Cannot delete quiz game linked to an experience with upload submissions. Unpublish the experience instead.");
+        }
+
+        quizGameRepository.delete(found);
     }
 }

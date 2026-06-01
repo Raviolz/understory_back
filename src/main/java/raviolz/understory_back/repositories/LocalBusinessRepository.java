@@ -21,4 +21,14 @@ public interface LocalBusinessRepository extends JpaRepository<LocalBusiness, UU
     Page<LocalBusiness> findByBusinessCategoryId(UUID businessCategoryId, Pageable pageable);
 
     Page<LocalBusiness> findByActiveTrue(Pageable pageable);
+
+    boolean existsByCityId(UUID cityId);
+
+    boolean existsByBusinessCategoryId(UUID businessCategoryId);
+
+    Optional<LocalBusiness> findByIdAndActiveTrue(UUID id);
+
+    Page<LocalBusiness> findByCityIdAndActiveTrue(UUID cityId, Pageable pageable);
+
+    Page<LocalBusiness> findByBusinessCategoryIdAndActiveTrue(UUID businessCategoryId, Pageable pageable);
 }

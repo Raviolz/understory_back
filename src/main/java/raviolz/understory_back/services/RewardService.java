@@ -13,6 +13,7 @@ import raviolz.understory_back.exceptions.NotFoundException;
 import raviolz.understory_back.exceptions.ValidationException;
 import raviolz.understory_back.payloads.RewardDTO;
 import raviolz.understory_back.repositories.RewardRepository;
+import raviolz.understory_back.repositories.UserRewardRepository;
 
 import java.util.UUID;
 
@@ -22,15 +23,18 @@ public class RewardService {
     private final RewardRepository rewardRepository;
     private final LocalBusinessService localBusinessService;
     private final CityService cityService;
+    private final UserRewardRepository userRewardRepository;
 
     public RewardService(
             RewardRepository rewardRepository,
             LocalBusinessService localBusinessService,
-            CityService cityService
+            CityService cityService,
+            UserRewardRepository userRewardRepository
     ) {
         this.rewardRepository = rewardRepository;
         this.localBusinessService = localBusinessService;
         this.cityService = cityService;
+        this.userRewardRepository = userRewardRepository;
     }
 
     public Reward save(RewardDTO body) {
@@ -124,5 +128,15 @@ public class RewardService {
         Reward found = findById(id);
         found.unpublish();
         return rewardRepository.save(found);
+    }
+
+    public void delete(UUID id) {
+        Reward found = findById(id);
+
+        if (userRewardRepository.existsByRewardId(id)) {
+            throw new ValidationException("Cannot delete reward already unlocked by users. Unpublish it instead.");
+        }
+
+        rewardRepository.delete(found);
     }
 }

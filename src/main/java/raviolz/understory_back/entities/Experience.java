@@ -118,7 +118,7 @@ public class Experience {
         if (title == null || title.isBlank()) {
             throw new ValidationException("Experience title is required");
         }
-        this.title = title;
+        this.title = title.trim();
     }
 
     public void setGameType(GameType gameType) {
@@ -139,14 +139,14 @@ public class Experience {
         if (hookText == null || hookText.isBlank()) {
             throw new ValidationException("Hook text is required");
         }
-        this.hookText = hookText;
+        this.hookText = hookText.trim();
     }
 
     public void setIntroText(String introText) {
         if (introText == null || introText.isBlank()) {
             throw new ValidationException("Intro text is required");
         }
-        this.introText = introText;
+        this.introText = introText.trim();
     }
 
     public void setContextText(String contextText) {
@@ -166,29 +166,27 @@ public class Experience {
         if (revealTitle == null || revealTitle.isBlank()) {
             throw new ValidationException("Reveal title is required");
         }
-        this.revealTitle = revealTitle;
+        this.revealTitle = revealTitle.trim();
     }
 
     public void setRevealImageUrl(String revealImageUrl) {
-        if (revealImageUrl == null || revealImageUrl.isBlank()) {
-            throw new ValidationException("Reveal image URL is required");
-        }
-
-        this.revealImageUrl = revealImageUrl.trim();
+        this.revealImageUrl = revealImageUrl != null && !revealImageUrl.isBlank()
+                ? revealImageUrl.trim()
+                : null;
     }
 
     public void setRevealText(String revealText) {
         if (revealText == null || revealText.isBlank()) {
             throw new ValidationException("Reveal text is required");
         }
-        this.revealText = revealText;
+        this.revealText = revealText.trim();
     }
 
     public void setJournalText(String journalText) {
         if (journalText == null || journalText.isBlank()) {
             throw new ValidationException("Journal text is required");
         }
-        this.journalText = journalText;
+        this.journalText = journalText.trim();
     }
 
     public void setDifficulty(int difficulty) {

@@ -54,4 +54,11 @@ public class BoExperienceCategoryController {
                 experienceCategoryService.update(categoryId, body)
         );
     }
+    
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    @DeleteMapping("/{categoryId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID categoryId) {
+        experienceCategoryService.delete(categoryId);
+    }
 }

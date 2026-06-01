@@ -37,4 +37,7 @@ public interface ExperienceRepository extends JpaRepository<Experience, UUID> {
 
     long countByPointOfInterestCityIdAndActiveTrue(UUID cityId);
 
+    boolean existsByPointOfInterestId(UUID pointOfInterestId);
+
+    boolean existsByExperienceCategoryId(UUID experienceCategoryId);
 }

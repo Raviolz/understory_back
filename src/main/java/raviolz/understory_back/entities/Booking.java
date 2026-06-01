@@ -41,7 +41,7 @@ public class Booking {
 
         setUserReward(userReward);
         setBookingDate(bookingDate);
-        this.notes = notes;
+        setNotes(notes);
         setPeopleCount(peopleCount);
         this.status = BookingStatus.PENDING;
     }
@@ -67,6 +67,12 @@ public class Booking {
         this.peopleCount = peopleCount;
     }
 
+    public void setNotes(String notes) {
+        this.notes = notes != null && !notes.isBlank()
+                ? notes.trim()
+                : null;
+    }
+
     // domain methods
 
     public void confirm() {
@@ -78,24 +84,16 @@ public class Booking {
     }
 
     public void reject() {
-        if (this.status == BookingStatus.CONFIRMED) {
-            throw new ValidationException("Confirmed booking cannot be rejected");
-        }
-
-        if (this.status == BookingStatus.COMPLETED) {
-            throw new ValidationException("Completed booking cannot be rejected");
-        }
-
-        if (this.status == BookingStatus.CANCELLED) {
-            throw new ValidationException("Cancelled booking cannot be rejected");
+        if (this.status != BookingStatus.PENDING) {
+            throw new ValidationException("Only pending bookings can be rejected");
         }
 
         this.status = BookingStatus.REJECTED;
     }
 
     public void cancel() {
-        if (this.status == BookingStatus.COMPLETED) {
-            throw new ValidationException("Completed booking cannot be cancelled");
+        if (this.status != BookingStatus.PENDING) {
+            throw new ValidationException("Only pending bookings can be cancelled");
         }
 
         this.status = BookingStatus.CANCELLED;
@@ -111,7 +109,7 @@ public class Booking {
 
 
     public void updateNotes(String notes) {
-        this.notes = notes;
+        setNotes(notes);
     }
 
     @Override

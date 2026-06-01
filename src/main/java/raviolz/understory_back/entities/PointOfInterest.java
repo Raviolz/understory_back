@@ -85,15 +85,13 @@ public class PointOfInterest {
         if (shortDescription == null || shortDescription.isBlank()) {
             throw new ValidationException("A short description is required");
         }
-        this.shortDescription = shortDescription;
+        this.shortDescription = shortDescription.trim();
     }
 
     public void setImageUrl(String imageUrl) {
-        if (imageUrl == null || imageUrl.isBlank()) {
-            throw new ValidationException("Image URL is required");
-        }
-
-        this.imageUrl = imageUrl.trim();
+        this.imageUrl = imageUrl != null && !imageUrl.isBlank()
+                ? imageUrl.trim()
+                : null;
     }
 
 

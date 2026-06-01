@@ -19,13 +19,6 @@ public class BoUserController {
     }
 
 
-    // VECCHIO PER TEST PRE AUTH
-//    @PostMapping
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public User save(@RequestBody @Valid UserDTO body) {
-//        return userService.save(body);
-//    }
-
     @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @GetMapping
     public Page<UserResponseDTO> findAll(@RequestParam(defaultValue = "0") int page,

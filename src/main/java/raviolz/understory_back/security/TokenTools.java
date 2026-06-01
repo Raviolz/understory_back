@@ -15,7 +15,7 @@ public class TokenTools {
 
     private final String secret;
 
-    public TokenTools(@Value("${jwt_secret}") String secret) {
+    public TokenTools(@Value("${jwt.secret}") String secret) {
         this.secret = secret;
     }
 

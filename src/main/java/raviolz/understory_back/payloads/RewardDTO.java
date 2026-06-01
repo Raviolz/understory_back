@@ -31,9 +31,9 @@ public record RewardDTO(
         RewardType rewardType,
 
         @NotNull(message = "Valid from date is required")
-        @FutureOrPresent(message = "Valid from date cannot be in the past") // controlla che sia o oggi o nel futuro
+        @FutureOrPresent(message = "Valid from date cannot be in the past")
         LocalDate validFrom,
-// la validazione tra le due date: form e until la controlla l' entity
+
         @NotNull(message = "Valid until date is required")
         @FutureOrPresent(message = "Valid until date cannot be in the past")
         LocalDate validUntil

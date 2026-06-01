@@ -14,6 +14,8 @@ import raviolz.understory_back.exceptions.ValidationException;
 import raviolz.understory_back.payloads.UpdateUploadGameDTO;
 import raviolz.understory_back.payloads.UploadGameDTO;
 import raviolz.understory_back.repositories.UploadGameRepository;
+import raviolz.understory_back.repositories.UserExperienceProgressRepository;
+import raviolz.understory_back.repositories.UserUploadSubmissionRepository;
 
 import java.util.UUID;
 
@@ -23,11 +25,19 @@ public class UploadGameService {
     private final UploadGameRepository uploadGameRepository;
     private final ExperienceService experienceService;
     private final ImageUploadService imageUploadService;
+    private final UserExperienceProgressRepository userExperienceProgressRepository;
+    private final UserUploadSubmissionRepository userUploadSubmissionRepository;
 
-    public UploadGameService(UploadGameRepository uploadGameRepository, ExperienceService experienceService, ImageUploadService imageUploadService) {
+    public UploadGameService(UploadGameRepository uploadGameRepository,
+                             ExperienceService experienceService,
+                             ImageUploadService imageUploadService,
+                             UserExperienceProgressRepository userExperienceProgressRepository,
+                             UserUploadSubmissionRepository userUploadSubmissionRepository) {
         this.uploadGameRepository = uploadGameRepository;
         this.experienceService = experienceService;
         this.imageUploadService = imageUploadService;
+        this.userExperienceProgressRepository = userExperienceProgressRepository;
+        this.userUploadSubmissionRepository = userUploadSubmissionRepository;
     }
 
     public UploadGame save(UploadGameDTO body) {
@@ -87,5 +97,21 @@ public class UploadGameService {
         found.setReferenceImageUrl(imageUrl);
 
         return uploadGameRepository.save(found);
+    }
+
+    public void delete(UUID id) {
+        UploadGame found = findById(id);
+
+        UUID experienceId = found.getExperience().getId();
+
+        if (userExperienceProgressRepository.existsByExperienceId(experienceId)) {
+            throw new ValidationException("Cannot delete upload game linked to an experience with user progress. Unpublish the experience instead.");
+        }
+
+        if (userUploadSubmissionRepository.existsByExperienceId(experienceId)) {
+            throw new ValidationException("Cannot delete upload game linked to user submissions. Unpublish the experience instead.");
+        }
+
+        uploadGameRepository.delete(found);
     }
 }

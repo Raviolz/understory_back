@@ -49,11 +49,21 @@ public class City {
     }
 
     public City(String name, String country, Double longitude, Double latitude, String description) {
-        this.name = name;
-        this.country = country;
-        this.longitude = longitude;
-        this.latitude = latitude;
-        this.description = description;
+        setName(name);
+        setCountry(country);
+
+        if (longitude == null) {
+            throw new ValidationException("Longitude is required");
+        }
+
+        if (latitude == null) {
+            throw new ValidationException("Latitude is required");
+        }
+
+        setLongitude(longitude);
+        setLatitude(latitude);
+        setDescription(description);
+
         this.active = false;
     }
 
@@ -93,11 +103,9 @@ public class City {
     }
 
     public void setCoverImageUrl(String coverImageUrl) {
-        if (coverImageUrl == null || coverImageUrl.isBlank()) {
-            throw new ValidationException("Cover image URL is required");
-        }
-
-        this.coverImageUrl = coverImageUrl.trim();
+        this.coverImageUrl = coverImageUrl != null && !coverImageUrl.isBlank()
+                ? coverImageUrl.trim()
+                : null;
     }
 
 

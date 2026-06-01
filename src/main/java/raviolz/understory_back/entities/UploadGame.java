@@ -56,14 +56,14 @@ public class UploadGame {
         if (promptText == null || promptText.isBlank()) {
             throw new ValidationException("Prompt text is required");
         }
-        this.promptText = promptText;
+        this.promptText = promptText.trim();
     }
 
     public void setTargetDescription(String targetDescription) {
         if (targetDescription == null || targetDescription.isBlank()) {
             throw new ValidationException("Target description is required");
         }
-        this.targetDescription = targetDescription;
+        this.targetDescription = targetDescription.trim();
     }
 
     public void setReferenceImageUrl(String referenceImageUrl) {

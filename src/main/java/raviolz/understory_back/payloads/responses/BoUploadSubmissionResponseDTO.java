@@ -28,11 +28,11 @@ public record BoUploadSubmissionResponseDTO(
                 submission.getUser().getUsername(),
                 submission.getExperience().getId(),
                 submission.getExperience().getTitle(),
+                submission.getImageUrl(),
                 uploadGame.getPromptText(),
                 uploadGame.getValidationHint(),
                 uploadGame.getTargetDescription(),
                 uploadGame.getReferenceImageUrl(),
-                submission.getImageUrl(),
                 submission.getStatus(),
                 submission.getSubmittedAt()
         );

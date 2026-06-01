@@ -54,4 +54,11 @@ public class BoBusinessCategoryController {
                 businessCategoryService.update(categoryId, body)
         );
     }
+
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    @DeleteMapping("/{categoryId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID categoryId) {
+        businessCategoryService.delete(categoryId);
+    }
 }

@@ -92,4 +92,10 @@ public class BoRewardController {
                 rewardService.unpublish(rewardId)
         );
     }
+
+    @DeleteMapping("/{rewardId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID rewardId) {
+        rewardService.delete(rewardId);
+    }
 }

@@ -88,18 +88,5 @@ public class EmailService {
             throw new InternalServerException("Errore durante l'invio dell'email di conferma prenotazione");
         }
     }
-
-    public void sendCustomEmail(String to, String subject, String text) {
-        HttpResponse<JsonNode> response = Unirest.post(this.baseUrl + "/v3/" + this.domainName + "/messages")
-                .basicAuth("api", this.apiKey)
-                .queryString("from", this.from)
-                .queryString("to", to)
-                .queryString("subject", subject)
-                .queryString("text", text)
-                .asJson();
-
-        if (response.getStatus() >= 400) {
-            throw new InternalServerException("Errore durante l'invio dell'email");
-        }
-    }
+    
 }

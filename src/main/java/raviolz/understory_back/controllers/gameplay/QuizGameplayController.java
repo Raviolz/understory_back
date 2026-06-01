@@ -10,7 +10,6 @@ import raviolz.understory_back.payloads.responses.QuizAnswerResponseDTO;
 import raviolz.understory_back.services.QuizGameplayService;
 
 
-// Per test: da implementare e/o spostare con implementazione di auth e experienceid
 @RestController
 @RequestMapping("/gameplay")
 public class QuizGameplayController {

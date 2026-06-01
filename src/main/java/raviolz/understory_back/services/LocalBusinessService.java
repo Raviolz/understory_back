@@ -14,6 +14,7 @@ import raviolz.understory_back.exceptions.ValidationException;
 import raviolz.understory_back.payloads.LocalBusinessDTO;
 import raviolz.understory_back.payloads.UpdateLocalBusinessDTO;
 import raviolz.understory_back.repositories.LocalBusinessRepository;
+import raviolz.understory_back.repositories.RewardRepository;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -25,17 +26,20 @@ public class LocalBusinessService {
     private final CityService cityService;
     private final BusinessCategoryService businessCategoryService;
     private final ImageUploadService imageUploadService;
+    private final RewardRepository rewardRepository;
 
     public LocalBusinessService(
             LocalBusinessRepository localBusinessRepository,
             CityService cityService,
             BusinessCategoryService businessCategoryService,
-            ImageUploadService imageUploadService
+            ImageUploadService imageUploadService,
+            RewardRepository rewardRepository
     ) {
         this.localBusinessRepository = localBusinessRepository;
         this.cityService = cityService;
         this.businessCategoryService = businessCategoryService;
         this.imageUploadService = imageUploadService;
+        this.rewardRepository = rewardRepository;
     }
 
     public LocalBusiness save(LocalBusinessDTO body) {
@@ -92,6 +96,25 @@ public class LocalBusinessService {
         return localBusinessRepository.findByBusinessCategoryId(businessCategoryId, pageable);
     }
 
+    public LocalBusiness findActiveById(UUID id) {
+        return localBusinessRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new NotFoundException("Local business with id " + id + " not found"));
+    }
+
+    public Page<LocalBusiness> findActiveByCity(UUID cityId, int page, int size, String sortBy) {
+        cityService.findActiveById(cityId);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return localBusinessRepository.findByCityIdAndActiveTrue(cityId, pageable);
+    }
+
+    public Page<LocalBusiness> findActiveByBusinessCategory(UUID businessCategoryId, int page, int size, String sortBy) {
+        businessCategoryService.findById(businessCategoryId);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return localBusinessRepository.findByBusinessCategoryIdAndActiveTrue(businessCategoryId, pageable);
+    }
+
     public LocalBusiness update(UUID id, UpdateLocalBusinessDTO body) {
         LocalBusiness found = findById(id);
 
@@ -107,11 +130,7 @@ public class LocalBusinessService {
                         normalizedAddress,
                         body.cityId()
                 );
-//        Cerco se esiste già un LocalBusiness con quella combinazione name + address + city.
-//                Se non esiste, posso aggiornare.
-//                Se esiste ed è lo stesso record che sto modificando, posso aggiornare.
-//                Se esiste ma è un altro record, blocco perché sarebbe un duplicato.
-        // se trovo me stesso e' ok, combinazione delle tre cose piu' id uguale se tre cose ma id diverso sto modificando in una copia gia' esistente
+
 
         if (existingBusiness.isPresent() && !existingBusiness.get().getId().equals(found.getId())) { //Il business trovato con stesso nome+indirizzo+città è diverso da quello che sto modificando?
             throw new ValidationException("Local business " + body.name() + " at address " + body.address() + " already exists in this city");
@@ -151,5 +170,15 @@ public class LocalBusinessService {
         LocalBusiness found = findById(id);
         found.unpublish();
         return localBusinessRepository.save(found);
+    }
+
+    public void delete(UUID id) {
+        LocalBusiness found = findById(id);
+
+        if (rewardRepository.existsByBusinessId(id)) {
+            throw new ValidationException("Cannot delete local business with linked rewards. Unpublish it instead.");
+        }
+
+        localBusinessRepository.delete(found);
     }
 }

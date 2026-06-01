@@ -51,4 +51,10 @@ public class BoQuizGameController {
                 quizGameService.update(quizGameId, body)
         );
     }
+
+    @DeleteMapping("/{quizGameId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID quizGameId) {
+        quizGameService.delete(quizGameId);
+    }
 }

@@ -9,10 +9,10 @@ import org.springframework.web.multipart.MultipartFile;
 import raviolz.understory_back.entities.City;
 import raviolz.understory_back.entities.ExperienceCategory;
 import raviolz.understory_back.exceptions.NotFoundException;
+import raviolz.understory_back.exceptions.ValidationException;
 import raviolz.understory_back.payloads.CityDTO;
 import raviolz.understory_back.payloads.UpdateCityDTO;
-import raviolz.understory_back.repositories.CityRepository;
-import raviolz.understory_back.repositories.ExperienceRepository;
+import raviolz.understory_back.repositories.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,11 +24,22 @@ public class CityService {
     private final CityRepository cityRepository;
     private final ImageUploadService imageUploadService;
     private final ExperienceRepository experienceRepository;
+    private final PointOfInterestRepository pointOfInterestRepository;
+    private final LocalBusinessRepository localBusinessRepository;
+    private final RewardRepository rewardRepository;
 
-    public CityService(CityRepository cityRepository, ImageUploadService imageUploadService, ExperienceRepository experienceRepository) {
+    public CityService(CityRepository cityRepository,
+                       ImageUploadService imageUploadService,
+                       ExperienceRepository experienceRepository,
+                       PointOfInterestRepository pointOfInterestRepository,
+                       LocalBusinessRepository localBusinessRepository,
+                       RewardRepository rewardRepository) {
         this.cityRepository = cityRepository;
         this.imageUploadService = imageUploadService;
         this.experienceRepository = experienceRepository;
+        this.pointOfInterestRepository = pointOfInterestRepository;
+        this.localBusinessRepository = localBusinessRepository;
+        this.rewardRepository = rewardRepository;
     }
 
     public City save(CityDTO body) {
@@ -105,6 +116,24 @@ public class CityService {
         City found = findById(id);
         found.unpublish();
         return cityRepository.save(found);
+    }
+
+    public void delete(UUID id) {
+        City found = findById(id);
+
+        if (pointOfInterestRepository.existsByCityId(id)) {
+            throw new ValidationException("Cannot delete city with linked points of interest. Unpublish it instead.");
+        }
+
+        if (localBusinessRepository.existsByCityId(id)) {
+            throw new ValidationException("Cannot delete city with linked local businesses. Unpublish it instead.");
+        }
+
+        if (rewardRepository.existsByCityId(id)) {
+            throw new ValidationException("Cannot delete city with linked rewards. Unpublish it instead.");
+        }
+
+        cityRepository.delete(found);
     }
 
 }

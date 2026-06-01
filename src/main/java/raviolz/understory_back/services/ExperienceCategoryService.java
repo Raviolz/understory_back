@@ -11,6 +11,7 @@ import raviolz.understory_back.exceptions.ValidationException;
 import raviolz.understory_back.payloads.ExperienceCategoryDTO;
 import raviolz.understory_back.payloads.UpdateExperienceCategoryDTO;
 import raviolz.understory_back.repositories.ExperienceCategoryRepository;
+import raviolz.understory_back.repositories.ExperienceRepository;
 
 import java.util.UUID;
 
@@ -18,9 +19,12 @@ import java.util.UUID;
 public class ExperienceCategoryService {
 
     private final ExperienceCategoryRepository experienceCategoryRepository;
+    private final ExperienceRepository experienceRepository;
 
-    public ExperienceCategoryService(ExperienceCategoryRepository experienceCategoryRepository) {
+    public ExperienceCategoryService(ExperienceCategoryRepository experienceCategoryRepository,
+                                     ExperienceRepository experienceRepository) {
         this.experienceCategoryRepository = experienceCategoryRepository;
+        this.experienceRepository = experienceRepository;
     }
 
     public ExperienceCategory save(ExperienceCategoryDTO body) {
@@ -70,7 +74,13 @@ public class ExperienceCategoryService {
     public ExperienceCategory update(UUID id, UpdateExperienceCategoryDTO body) {
         ExperienceCategory found = findById(id);
 
+        String normalizedCode = body.code().trim().toUpperCase();
         String normalizedLabel = body.label().trim();
+
+        if (!found.getCode().equals(normalizedCode) &&
+                experienceCategoryRepository.existsByCode(normalizedCode)) {
+            throw new ValidationException("Experience category code " + body.code() + " already exists");
+        }
 
         if (!found.getLabel().equals(normalizedLabel) &&
                 experienceCategoryRepository.existsByLabel(normalizedLabel)) {
@@ -84,5 +94,15 @@ public class ExperienceCategoryService {
         found.setColor(body.color());
 
         return experienceCategoryRepository.save(found);
+    }
+
+    public void delete(UUID id) {
+        ExperienceCategory found = findById(id);
+
+        if (experienceRepository.existsByExperienceCategoryId(id)) {
+            throw new ValidationException("Cannot delete experience category used by experiences.");
+        }
+
+        experienceCategoryRepository.delete(found);
     }
 }

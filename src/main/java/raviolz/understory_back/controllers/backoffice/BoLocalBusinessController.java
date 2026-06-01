@@ -77,5 +77,10 @@ public class BoLocalBusinessController {
         );
     }
 
+    @DeleteMapping("/{businessId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID businessId) {
+        localBusinessService.delete(businessId);
+    }
 
 }

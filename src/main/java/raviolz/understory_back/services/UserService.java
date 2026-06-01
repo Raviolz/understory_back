@@ -37,26 +37,30 @@ public class UserService {
     }
 
     public User save(UserDTO body) {
-        if (userRepository.existsByEmail(body.email().trim().toLowerCase())) {
+        String normalizedEmail = body.email().trim().toLowerCase();
+        String normalizedUsername = body.username().trim();
+
+        if (userRepository.existsByEmail(normalizedEmail)) {
             throw new ValidationException("Email " + body.email() + " already in use");
         }
 
-        if (userRepository.existsByUsername(body.username().trim())) {
+        if (userRepository.existsByUsername(normalizedUsername)) {
             throw new ValidationException("Username " + body.username() + " already in use");
         }
 
         Role userRole = roleService.findByCode("USER");
 
         User user = new User(
-                body.username(),
+                normalizedUsername,
                 body.name(),
                 body.surname(),
-                body.email(),
+                normalizedEmail,
                 bcrypt.encode(body.password()),
                 userRole
         );
 
         User savedUser = userRepository.save(user);
+
         try {
             emailService.sendRegistrationEmail(savedUser);
         } catch (InternalServerException ex) {
@@ -64,7 +68,6 @@ public class UserService {
         }
 
         return savedUser;
-
     }
 
     public Page<User> findAll(int page, int size, String sortBy) {
@@ -87,7 +90,7 @@ public class UserService {
             throw new ValidationException("Username " + body.username() + " already in use");
         }
 
-        found.setUsername(body.username());
+        found.setUsername(normalizedUsername);
         found.setName(body.name());
         found.setSurname(body.surname());
 
@@ -106,8 +109,14 @@ public class UserService {
     }
 
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
+        if (email == null || email.isBlank()) {
+            throw new NotFoundException("User with email not found");
+        }
+
+        String normalizedEmail = email.trim().toLowerCase();
+
+        return userRepository.findByEmail(normalizedEmail)
+                .orElseThrow(() -> new NotFoundException("User with email " + normalizedEmail + " not found"));
     }
 
     public User promoteToAdmin(UUID userId) {

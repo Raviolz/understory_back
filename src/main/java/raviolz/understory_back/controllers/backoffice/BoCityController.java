@@ -65,4 +65,10 @@ public class BoCityController {
     public CityResponseDTO unpublish(@PathVariable UUID cityId) {
         return CityResponseDTO.fromEntity(cityService.unpublish(cityId));
     }
+
+    @DeleteMapping("/{cityId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID cityId) {
+        cityService.delete(cityId);
+    }
 }

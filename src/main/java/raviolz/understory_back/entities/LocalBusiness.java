@@ -104,7 +104,7 @@ public class LocalBusiness {
             throw new ValidationException("Description is required");
         }
 
-        this.description = description;
+        this.description = description.trim();
     }
 
 

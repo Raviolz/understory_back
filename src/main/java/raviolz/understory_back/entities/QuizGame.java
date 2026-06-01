@@ -68,35 +68,35 @@ public class QuizGame {
         if (questionText == null || questionText.isBlank()) {
             throw new ValidationException("Question text is required");
         }
-        this.questionText = questionText;
+        this.questionText = questionText.trim();
     }
 
     public void setAnswerA(String answerA) {
         if (answerA == null || answerA.isBlank()) {
             throw new ValidationException("Answer A is required");
         }
-        this.answerA = answerA;
+        this.answerA = answerA.trim();
     }
 
     public void setAnswerB(String answerB) {
         if (answerB == null || answerB.isBlank()) {
             throw new ValidationException("Answer B is required");
         }
-        this.answerB = answerB;
+        this.answerB = answerB.trim();
     }
 
     public void setAnswerC(String answerC) {
         if (answerC == null || answerC.isBlank()) {
             throw new ValidationException("Answer C is required");
         }
-        this.answerC = answerC;
+        this.answerC = answerC.trim();
     }
 
     public void setAnswerD(String answerD) {
         if (answerD == null || answerD.isBlank()) {
             throw new ValidationException("Answer D is required");
         }
-        this.answerD = answerD;
+        this.answerD = answerD.trim();
     }
 
     public void setCorrectAnswer(QuizAnswerOption correctAnswer) {
@@ -111,7 +111,7 @@ public class QuizGame {
         if (explanationText == null || explanationText.isBlank()) {
             throw new ValidationException("Explanation text is required");
         }
-        this.explanationText = explanationText;
+        this.explanationText = explanationText.trim();
     }
 
     // domain methods

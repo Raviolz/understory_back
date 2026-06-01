@@ -10,9 +10,10 @@ import raviolz.understory_back.entities.Experience;
 import raviolz.understory_back.entities.ExperienceCategory;
 import raviolz.understory_back.entities.PointOfInterest;
 import raviolz.understory_back.exceptions.NotFoundException;
+import raviolz.understory_back.exceptions.ValidationException;
 import raviolz.understory_back.payloads.ExperienceDTO;
 import raviolz.understory_back.payloads.UpdateExperienceDTO;
-import raviolz.understory_back.repositories.ExperienceRepository;
+import raviolz.understory_back.repositories.*;
 
 import java.util.UUID;
 
@@ -23,16 +24,28 @@ public class ExperienceService {
     private final PointOfInterestService pointOfInterestService;
     private final ExperienceCategoryService experienceCategoryService;
     private final ImageUploadService imageUploadService;
+    private final UserExperienceProgressRepository userExperienceProgressRepository;
+    private final UserUploadSubmissionRepository userUploadSubmissionRepository;
+    private final QuizGameRepository quizGameRepository;
+    private final UploadGameRepository uploadGameRepository;
 
     public ExperienceService(ExperienceRepository experienceRepository,
                              PointOfInterestService pointOfInterestService,
                              ExperienceCategoryService experienceCategoryService,
-                             ImageUploadService imageUploadService
+                             ImageUploadService imageUploadService,
+                             UserExperienceProgressRepository userExperienceProgressRepository,
+                             UserUploadSubmissionRepository userUploadSubmissionRepository,
+                             QuizGameRepository quizGameRepository,
+                             UploadGameRepository uploadGameRepository
     ) {
         this.experienceRepository = experienceRepository;
         this.pointOfInterestService = pointOfInterestService;
         this.experienceCategoryService = experienceCategoryService;
         this.imageUploadService = imageUploadService;
+        this.userExperienceProgressRepository = userExperienceProgressRepository;
+        this.userUploadSubmissionRepository = userUploadSubmissionRepository;
+        this.quizGameRepository = quizGameRepository;
+        this.uploadGameRepository = uploadGameRepository;
     }
 
     public Experience save(ExperienceDTO body) {
@@ -128,4 +141,26 @@ public class ExperienceService {
         return experienceRepository.save(found);
     }
 
+
+    public void delete(UUID id) {
+        Experience found = findById(id);
+
+        if (userExperienceProgressRepository.existsByExperienceId(id)) {
+            throw new ValidationException("Cannot delete experience with user progress. Unpublish it instead.");
+        }
+
+        if (userUploadSubmissionRepository.existsByExperienceId(id)) {
+            throw new ValidationException("Cannot delete experience with user upload submissions. Unpublish it instead.");
+        }
+
+        if (quizGameRepository.existsByExperienceId(id)) {
+            throw new ValidationException("Cannot delete experience with linked quiz game. Delete the quiz game first or unpublish the experience.");
+        }
+
+        if (uploadGameRepository.existsByExperienceId(id)) {
+            throw new ValidationException("Cannot delete experience with linked upload game. Delete the upload game first or unpublish the experience.");
+        }
+
+        experienceRepository.delete(found);
+    }
 }

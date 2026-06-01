@@ -98,12 +98,12 @@ public class User implements UserDetails {
 
     public void setEmail(String email) {
         if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("Email is required");
+            throw new ValidationException("Email is required");
         }
         if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
             throw new ValidationException("Invalid email format");
         }
-        this.email = email.trim();
+        this.email = email.trim().toLowerCase();
     }
 
     public void setRole(Role role) {

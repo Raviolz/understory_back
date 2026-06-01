@@ -47,7 +47,7 @@ public class Role {
         if (description == null || description.isBlank()) {
             throw new ValidationException("Role description is required");
         }
-        this.description = description;
+        this.description = description.trim();
     }
 
 
