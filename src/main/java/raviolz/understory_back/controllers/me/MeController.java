@@ -14,6 +14,7 @@ import raviolz.understory_back.services.UserExperienceProgressService;
 import raviolz.understory_back.services.UserRewardService;
 import raviolz.understory_back.services.UserService;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -98,5 +99,13 @@ public class MeController {
                 currentUser.getId(),
                 experienceId
         );
+    }
+
+    @GetMapping("/local-shops")
+    public List<UserLocalShopResponseDTO> getMyLocalShops(@AuthenticationPrincipal User currentUser) {
+        return userRewardService.findLocalShopsByUser(currentUser.getId())
+                .stream()
+                .map(UserLocalShopResponseDTO::fromEntity)
+                .toList();
     }
 }

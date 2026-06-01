@@ -100,6 +100,7 @@ public class UserRewardService {
         return userRewardRepository.findByUserIdAndStatus(userId, status, pageable);
     }
 
+
     public UserReward redeem(UUID id) {
         UserReward found = findById(id);
         found.redeem();
@@ -159,5 +160,12 @@ public class UserRewardService {
         UserReward userReward = new UserReward(user, selectedReward);
 
         return Optional.of(userRewardRepository.save(userReward));
+    }
+
+
+    public List<UserReward> findLocalShopsByUser(UUID userId) {
+        userService.findById(userId);
+
+        return userRewardRepository.findUnlockedLocalShopsByUserId(userId);
     }
 }
