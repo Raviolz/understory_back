@@ -15,6 +15,7 @@ import raviolz.understory_back.exceptions.ValidationException;
 import raviolz.understory_back.payloads.UserNoteDTO;
 import raviolz.understory_back.payloads.responses.CityKnowledgeResponseDTO;
 import raviolz.understory_back.payloads.responses.ExperienceCompletionResponseDTO;
+import raviolz.understory_back.payloads.responses.UserAtlasEntryResponseDTO;
 import raviolz.understory_back.repositories.*;
 
 import java.util.List;
@@ -182,11 +183,46 @@ public class UserExperienceProgressService {
                     experienceId,
                     false,
                     null,
+                    null,
+                    null,
+                    null,
+                    null,
                     null
             );
         }
 
-        String explanationText = switch (progress.getExperience().getGameType()) {
+        String explanationText = findExplanationTextForExperience(progress);
+
+        return new ExperienceCompletionResponseDTO(
+                experienceId,
+                true,
+                progress.getCompletedAt(),
+                progress.getExperience().getRevealTitle(),
+                progress.getExperience().getRevealImageUrl(),
+                progress.getExperience().getRevealText(),
+                progress.getExperience().getJournalText(),
+                explanationText
+        );
+    }
+
+
+    public Page<UserAtlasEntryResponseDTO> findAtlasByUser(UUID userId, int page, int size, String sortBy) {
+        userService.findById(userId);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+
+        return userExperienceProgressRepository
+                .findByUserIdAndStatus(userId, ProgressStatus.COMPLETED, pageable)
+                .map(progress -> UserAtlasEntryResponseDTO.fromEntity(
+                        progress,
+                        findExplanationTextForExperience(progress)
+                ));
+    }
+
+    private String findExplanationTextForExperience(UserExperienceProgress progress) {
+        UUID experienceId = progress.getExperience().getId();
+
+        return switch (progress.getExperience().getGameType()) {
             case QUIZ -> quizGameRepository.findByExperienceId(experienceId)
                     .map(quizGame -> quizGame.getExplanationText())
                     .orElse(null);
@@ -195,12 +231,5 @@ public class UserExperienceProgressService {
                     .map(uploadGame -> uploadGame.getExplanationText())
                     .orElse(null);
         };
-
-        return new ExperienceCompletionResponseDTO(
-                experienceId,
-                true,
-                progress.getCompletedAt(),
-                explanationText
-        );
     }
 }
