@@ -132,7 +132,7 @@ public class LocalBusinessService {
                 );
 
 
-        if (existingBusiness.isPresent() && !existingBusiness.get().getId().equals(found.getId())) { //Il business trovato con stesso nome+indirizzo+città è diverso da quello che sto modificando?
+        if (existingBusiness.isPresent() && !existingBusiness.get().getId().equals(found.getId())) {
             throw new ValidationException("Local business " + body.name() + " at address " + body.address() + " already exists in this city");
         }
 

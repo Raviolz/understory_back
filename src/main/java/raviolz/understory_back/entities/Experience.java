@@ -54,6 +54,9 @@ public class Experience {
     @Column(name = "journal_text", nullable = false, length = 1000)
     private String journalText;
 
+    @Column(name = "atlas_text", length = 10000)
+    private String atlasText;
+
     @Column(name = "xp_reward", nullable = false)
     private int xpReward;
 
@@ -67,9 +70,21 @@ public class Experience {
     @JoinColumn(name = "experience_category_id", nullable = false)
     private ExperienceCategory experienceCategory;
 
-    public Experience(PointOfInterest pointOfInterest, String title, GameType gameType, String hookText,
-                      String introText, String contextText, String leadInText, String revealTitle, String revealImageUrl, String revealText, String journalText,
-                      int xpReward, int difficulty, ExperienceCategory experienceCategory) {
+    public Experience(PointOfInterest pointOfInterest,
+                      String title,
+                      GameType gameType,
+                      String hookText,
+                      String introText,
+                      String contextText,
+                      String leadInText,
+                      String revealTitle,
+                      String revealImageUrl,
+                      String revealText,
+                      String journalText,
+                      String atlasText,
+                      int xpReward,
+                      int difficulty,
+                      ExperienceCategory experienceCategory) {
         setPointOfInterest(pointOfInterest);
         setTitle(title);
         setGameType(gameType);
@@ -81,15 +96,27 @@ public class Experience {
         setRevealImageUrl(revealImageUrl);
         setRevealText(revealText);
         setJournalText(journalText);
+        setAtlasText(atlasText);
         setXpReward(xpReward);
         setDifficulty(difficulty);
         this.active = false;
         setExperienceCategory(experienceCategory);
     }
 
-    public Experience(PointOfInterest pointOfInterest, String title, GameType gameType, String hookText,
-                      String introText, String contextText, String leadInText, String revealTitle, String revealText, String journalText,
-                      int xpReward, int difficulty, ExperienceCategory experienceCategory) {
+    public Experience(PointOfInterest pointOfInterest,
+                      String title,
+                      GameType gameType,
+                      String hookText,
+                      String introText,
+                      String contextText,
+                      String leadInText,
+                      String revealTitle,
+                      String revealText,
+                      String journalText,
+                      String atlasText,
+                      int xpReward,
+                      int difficulty,
+                      ExperienceCategory experienceCategory) {
         setPointOfInterest(pointOfInterest);
         setTitle(title);
         setGameType(gameType);
@@ -100,6 +127,7 @@ public class Experience {
         setRevealTitle(revealTitle);
         setRevealText(revealText);
         setJournalText(journalText);
+        setAtlasText(atlasText);
         setXpReward(xpReward);
         setDifficulty(difficulty);
         this.active = false;
@@ -189,6 +217,13 @@ public class Experience {
         this.journalText = journalText.trim();
     }
 
+
+    public void setAtlasText(String atlasText) {
+        this.atlasText = atlasText != null && !atlasText.isBlank()
+                ? atlasText.trim()
+                : null;
+    }
+
     public void setDifficulty(int difficulty) {
         if (difficulty < 1 || difficulty > 5) {
             throw new ValidationException("Difficulty must be between 1 and 5");
@@ -229,6 +264,7 @@ public class Experience {
                 ", revealImageUrl='" + revealImageUrl + '\'' +
                 ", revealText='" + revealText + '\'' +
                 ", journalText='" + journalText + '\'' +
+                ", atlasText='" + atlasText + '\'' +
                 ", xpReward=" + xpReward +
                 ", difficulty=" + difficulty +
                 ", active=" + active +

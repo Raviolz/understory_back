@@ -74,30 +74,25 @@ public class UserReward {
         this.unlockedAt = unlockedAt;
     }
 
-    // domain methods
-
-// Redeems the reward unlocked by a specific user.
-// It prevents redeeming rewards that are already used, expired,
-// not published, not started yet or outside their validity window.
 
     public void redeem() {
-        if (this.status == UserRewardStatus.REDEEMED) { // non si puo' usare due volte lo stesso premio
+        if (this.status == UserRewardStatus.REDEEMED) {
             throw new ValidationException("Reward has already been redeemed");
         }
 
-        if (this.status == UserRewardStatus.EXPIRED) { // non si puo' usare un premio scaduto
+        if (this.status == UserRewardStatus.EXPIRED) {
             throw new ValidationException("Expired reward cannot be redeemed");
         }
 
-        if (!this.reward.isCurrentlyValid()) { // metodo di reward NEGATO --> reward NON attivo e/o NON utilizzabile in questa finestra di tempo
-            if (this.reward.isExpired()) { // se il motivo e' : metodo di reward --> se data scadenza passata rispetto ad oggi: scaduto
-                this.status = UserRewardStatus.EXPIRED; // marcalo come tale
+        if (!this.reward.isCurrentlyValid()) {
+            if (this.reward.isExpired()) {
+                this.status = UserRewardStatus.EXPIRED;
             }
 
             throw new ValidationException("Reward is not currently valid");
         }
 
-        this.status = UserRewardStatus.REDEEMED; // se tutto ok --> segna come riscattato adesso
+        this.status = UserRewardStatus.REDEEMED;
         this.redeemedAt = LocalDateTime.now();
     }
 

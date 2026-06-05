@@ -103,8 +103,6 @@ public class UserExperienceProgress {
     }
 
 
-    // domain methods
-
     public void complete() {
         if (this.status == ProgressStatus.COMPLETED) {
             return;
@@ -114,12 +112,12 @@ public class UserExperienceProgress {
         this.completedAt = LocalDateTime.now();
     }
 
-    public boolean isCompleted() { // controllo a differenza di complete() che imposta
+    public boolean isCompleted() {
         return this.status == ProgressStatus.COMPLETED;
     }
 
     public void markXpAwarded() {
-        if (!isCompleted()) { // controllo sull enum
+        if (!isCompleted()) {
             throw new ValidationException("Cannot award XP before completing the experience");
         }
         if (this.xpAwarded) {
@@ -128,7 +126,7 @@ public class UserExperienceProgress {
         this.xpAwarded = true;
     }
 
-    public void updateUserNote(String userNote) { // se aggiornando la nota l utente non mette nulla invece che salvare " " salvo nul nel db per chiarezza e ordine
+    public void updateUserNote(String userNote) {
         this.userNote = userNote != null && !userNote.isBlank()
                 ? userNote.trim()
                 : null;

@@ -31,6 +31,7 @@ public record BoExperienceResponseDTO(
         String revealImageUrl,
         String revealText,
         String journalText,
+        String atlasText,
 
         int xpReward,
         int difficulty,
@@ -63,6 +64,8 @@ public record BoExperienceResponseDTO(
                 experience.getRevealImageUrl(),
                 experience.getRevealText(),
                 experience.getJournalText(),
+                experience.getAtlasText(),
+
 
                 experience.getXpReward(),
                 experience.getDifficulty(),

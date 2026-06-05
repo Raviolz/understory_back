@@ -44,7 +44,7 @@ public class UserUploadSubmission {
         setUser(user);
         setExperience(experience);
         setImageUrl(imageUrl);
-        this.status = UploadSubmissionStatus.SUBMITTED; // V1: parte da submitted.. l' approvazione automatica la metto nel service .. in caso AI validation piu' avanti
+        this.status = UploadSubmissionStatus.SUBMITTED;
         this.submittedAt = LocalDateTime.now();
     }
 
@@ -88,7 +88,6 @@ public class UserUploadSubmission {
         this.submittedAt = submittedAt;
     }
 
-    // domain methods
 
     public void approve() {
         this.status = UploadSubmissionStatus.APPROVED;

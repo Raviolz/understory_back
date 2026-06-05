@@ -57,7 +57,7 @@ public class Reward {
         setDescription(description);
         setDiscountCode(discountCode);
         setRewardType(rewardType);
-        setValidityPeriod(validFrom, validUntil); // interconnessi inutile separarli per controlli
+        setValidityPeriod(validFrom, validUntil);
         this.active = false;
     }
 
@@ -93,7 +93,7 @@ public class Reward {
         this.description = description.trim();
     }
 
-    public void setDiscountCode(String discountCode) { // opzionale non deve lanciare eccezione se null
+    public void setDiscountCode(String discountCode) {
         this.discountCode = discountCode != null && !discountCode.isBlank()
                 ? discountCode.trim()
                 : null;
@@ -107,7 +107,7 @@ public class Reward {
         this.rewardType = rewardType;
     }
 
-    public void setValidityPeriod(LocalDate validFrom, LocalDate validUntil) { // controllo che from sia prima di until
+    public void setValidityPeriod(LocalDate validFrom, LocalDate validUntil) {
         if (validFrom == null) {
             throw new ValidationException("Valid from date is required");
         }
@@ -132,18 +132,17 @@ public class Reward {
         this.active = false;
     }
 
-// domain methods
 
     public boolean isExpired() {
         return LocalDate.now().isAfter(this.validUntil);
     }
 
-    public boolean isCurrentlyValid() { // controllo che sia pubblicato (attivo) e che sia utilizzabile in termini di finestra di tempo in cui e' possibile utilizzarlo rispetto ad oggi
-        LocalDate today = LocalDate.now(); // reward valido come struttura ma non utilizzabile oggi
+    public boolean isCurrentlyValid() {
+        LocalDate today = LocalDate.now();
 
-        return this.active && // attivo = true
-                !today.isBefore(this.validFrom) && // oggi NON è prima della data di inizio
-                !today.isAfter(this.validUntil); // oggi NON e' dopo della data di fine
+        return this.active &&
+                !today.isBefore(this.validFrom) &&
+                !today.isAfter(this.validUntil);
     }
 
 

@@ -46,6 +46,9 @@ public record ExperienceDTO(
         @Size(max = 1000, message = "Journal text cannot exceed 1000 characters")
         String journalText,
 
+        @Size(max = 10000, message = "Atlas text cannot exceed 10000 characters")
+        String atlasText,
+
         @NotNull(message = "XP reward is required")
         @Min(value = 1, message = "XP reward must be greater than zero")
         Integer xpReward,

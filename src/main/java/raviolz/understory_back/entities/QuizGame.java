@@ -39,7 +39,6 @@ public class QuizGame {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "correct_answer", nullable = false, length = 20)
-// potrebbe essere tranquillamente 1 ma lascio alzo in caso si decida di cambiare enum di riferimento
     private QuizAnswerOption correctAnswer;
 
     @Column(name = "explanation_text", nullable = false, length = 1500)
@@ -113,8 +112,6 @@ public class QuizGame {
         }
         this.explanationText = explanationText.trim();
     }
-
-    // domain methods
 
 
     public boolean isCorrectAnswer(QuizAnswerOption selectedAnswer) {

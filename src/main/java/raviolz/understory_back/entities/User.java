@@ -61,7 +61,7 @@ public class User implements UserDetails {
             throw new ValidationException("Password is required");
         }
         this.password = password;
-        this.avatarUrl = "https://ui-avatars.com/api/?name=" + name + "+" + surname; // momentaneo in attesa di avatar base a tema
+        this.avatarUrl = "https://ui-avatars.com/api/?name=" + name + "+" + surname;
         this.xp = 0;
         this.level = 1;
         if (role == null) {
@@ -123,10 +123,8 @@ public class User implements UserDetails {
     }
 
 
-    // domain methods
-
     private void recalculateLevel() {
-        this.level = (this.xp / 100) + 1; // NB: E' un int quindi ad esempio 98/100 = 0 senza parte decimale +1 --> lev 1
+        this.level = (this.xp / 100) + 1;
     }
 
     public void addXp(int amount) {
@@ -137,7 +135,6 @@ public class User implements UserDetails {
         recalculateLevel();
     }
 
-    // security
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

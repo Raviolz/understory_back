@@ -64,6 +64,7 @@ public class ExperienceService {
                 body.revealTitle(),
                 body.revealText(),
                 body.journalText(),
+                body.atlasText(),
                 body.xpReward(),
                 body.difficulty(),
                 experienceCategory
@@ -100,6 +101,7 @@ public class ExperienceService {
         found.setRevealTitle(body.revealTitle());
         found.setRevealText(body.revealText());
         found.setJournalText(body.journalText());
+        found.setAtlasText(body.atlasText());
         found.setXpReward(body.xpReward());
         found.setDifficulty(body.difficulty());
 
