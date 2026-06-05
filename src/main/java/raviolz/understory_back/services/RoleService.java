@@ -64,7 +64,7 @@ public class RoleService {
                 .orElseThrow(() -> new NotFoundException("Role with code " + code + " not found"));
     }
 
-    public Role update(UUID id, UpdateRoleDTO body) { // intenzionalmente non faccio modificare il role code in quanto identificativo di logiche interne da poi controllare in auth
+    public Role update(UUID id, UpdateRoleDTO body) {
         Role found = findById(id);
 
         String normalizedLabel = body.label().trim();

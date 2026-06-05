@@ -54,7 +54,7 @@ public class Experience {
     @Column(name = "journal_text", nullable = false, length = 1000)
     private String journalText;
 
-    @Column(name = "atlas_text", length = 10000)
+    @Column(name = "atlas_text", nullable = false, length = 10000)
     private String atlasText;
 
     @Column(name = "xp_reward", nullable = false)
@@ -219,9 +219,11 @@ public class Experience {
 
 
     public void setAtlasText(String atlasText) {
-        this.atlasText = atlasText != null && !atlasText.isBlank()
-                ? atlasText.trim()
-                : null;
+        if (atlasText == null || atlasText.isBlank()) {
+            throw new ValidationException("Atlas text is required");
+        }
+
+        this.atlasText = atlasText.trim();
     }
 
     public void setDifficulty(int difficulty) {

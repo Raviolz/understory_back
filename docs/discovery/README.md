@@ -1,3 +1,7 @@
+## Related repository
+
+Frontend repository: [Understory Frontend](https://github.com/Raviolz/understory_front.git)
+
 # Analysis & Brainstorming
 
 ⚠ Content is updated periodically to reflect the current state of the software architecture. ⚠

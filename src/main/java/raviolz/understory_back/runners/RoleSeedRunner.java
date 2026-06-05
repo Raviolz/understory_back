@@ -23,21 +23,21 @@ public class RoleSeedRunner implements CommandLineRunner {
         roleRepository.findByCode("USER")
                 .orElseGet(() -> roleRepository.save(new Role(
                         "USER",
-                        "User",
+                        "Esploratore",
                         "Standard user who explores and completes experiences"
                 )));
 
         roleRepository.findByCode("ADMIN")
                 .orElseGet(() -> roleRepository.save(new Role(
                         "ADMIN",
-                        "Admin",
-                        "Administrator who manages content, users and bookings"
+                        "Archivista",
+                        "Administrator who manages content, bookings and submissions"
                 )));
 
         roleRepository.findByCode("SUPER_ADMIN")
                 .orElseGet(() -> roleRepository.save(new Role(
                         "SUPER_ADMIN",
-                        "Super Admin",
+                        "Custode",
                         "Full-access administrator account"
                 )));
 
